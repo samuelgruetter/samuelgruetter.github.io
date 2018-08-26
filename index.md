@@ -3,30 +3,38 @@ layout: default
 title: Samuel Gruetter
 ---
 
+<style>
+  .rightbox {
+    display: inline-block;
+    width: 55%;
+    padding-bottom: .7em;
+  }
+</style>
 
-<div>
-  <div style="width: 40%">
-    <img style="float: left; padding-right: 10px; padding-bottom: 10px" src="{{ "/assets/gruetter_samuel_2.jpg" | absolute_url }}">
-  </div>
-  <div>
-    I'm a PhD student at <a href="https://www.csail.mit.edu/">MIT CSAIL</a>, advised by <a href="http://adam.chlipala.net/">Prof. Adam Chlipala</a>.
-    <br/><br/>
+<div style="width: 40%">
+  <img style="float: left; padding-right: 10px; padding-bottom: 10px" src="{{ "/assets/gruetter_samuel_2.jpg" | absolute_url }}">
+</div>
 
-    <b>Email:</b> My last name at mit dot edu <br/>
-    <br/>
+<div class="rightbox">
+  I'm a PhD student at <a href="https://www.csail.mit.edu/">MIT CSAIL</a>, advised by <a href="http://adam.chlipala.net/">Prof. Adam Chlipala</a>.
+</div>
 
+<div class="rightbox">
+  <b>Email:</b> My last name at mit dot edu <br/>
+</div>
+
+<div class="rightbox">
     <b>Office address:</b><br/>
     32-G822<br/>
     MIT CSAIL, Stata Center<br/>
     32 Vassar Street<br/>
     Cambridge MA 02139<br/>
     USA<br/>
-
-    {% comment %}
-    TODO Link to full CV
-    {% endcomment %}
-  </div>
 </div>
+
+{% comment %}
+TODO Link to full CV
+{% endcomment %}
 
 <div style="clear: both; display: table;"></div>
 
