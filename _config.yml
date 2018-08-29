@@ -26,6 +26,7 @@ plugins:
   - jekyll-archives
   - jekyll-paginate
   - jekyll-sitemap
+  - jekyll-redirect-from
 
 permalink: /blog/:year/:month/:day/:title/
 paginate_path: /blog/posts/:num/
