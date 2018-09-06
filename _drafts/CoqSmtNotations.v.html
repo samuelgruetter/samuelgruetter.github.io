@@ -1,0 +1,34 @@
+<div class="code">
+</div>
+
+<div class="doc">
+Suppose I am despairing on a Coq proof goal about integers,
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Goal</span> 1 <span class="id" title="notation">=</span> 1. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+but <span class="inlinecode"><span class="id" title="tactic">omega</span></span>, <span class="inlinecode"><span class="id" title="var">lia</span></span>, <span class="inlinecode"><span class="id" title="var">nia</span></span> etc don't work, and I don't even know if my goal is true at all.
+Before
+continuing my proof, I'd like a quick diagnosis, by a bleeding edge tool, on
+whether the goal actually is true, but I don't feel like installing any
+plugins or additional tools.
+In this talk, I will demo a quick way to achieve this: I will go to
+<a href="https://github.com/samuelgruetter/coq-smt-notations">https://github.com/samuelgruetter/coq-smt-notations</a>, copy-paste a few lines
+of Ltac and Coq notations right into my proof buffer (no need to compile
+anything or to reprocess anything in the IDE), and I get the negation of my
+goal printed in smtlib format. I don't even need to install an SMT solver,
+but I can just copy-paste this into the online Z3 solver available at
+<a href="https://rise4fun.com/z3">https://rise4fun.com/z3</a>, and immediately get <span class="inlinecode"><span class="id" title="var">unsat</span></span>, which means I should
+continue my proof, or a counterexample, which helps me figure out what's
+wrong.
+
+</div>
+<div class="code">
+</div>
