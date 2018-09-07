@@ -15,7 +15,7 @@ COQDOC=$(COQBIN)coqdoc
 	$(COQC) $*.v
 
 %.v.html: %.vo %.v
-	$(COQDOC) --body-only --short --no-index --no-externals --output $*.v.html  $*.v
+	$(COQDOC) --parse-comments --body-only --short --no-index --no-externals --output $*.v.html  $*.v
 	rm "`dirname $*`/coqdoc.css"
 
 all: $(VOS) $(VHTMLS)

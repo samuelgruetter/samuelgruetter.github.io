@@ -45,5 +45,3 @@ I'm collecting a list of more Coq tricks {{https://github.com/samuelgruetter/coq
 For instance, Tej Chajed's list is {{https://github.com/tchajed/coq-tricks}here}.
 If you have a collection of Coq tricks as well, please let me know!
 *)
-
-(* TODO Santiago Cuellar? *)

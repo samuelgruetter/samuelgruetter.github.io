@@ -1,34 +1,583 @@
 <div class="code">
-</div>
-
-<div class="doc">
-Suppose I am despairing on a Coq proof goal about integers,
-
-</div>
-<div class="code">
-
-<br/>
-<span class="id" title="keyword">Goal</span> 1 <span class="id" title="notation">=</span> 1. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
 
 <br/>
 </div>
 
 <div class="doc">
-but <span class="inlinecode"><span class="id" title="tactic">omega</span></span>, <span class="inlinecode"><span class="id" title="var">lia</span></span>, <span class="inlinecode"><span class="id" title="var">nia</span></span> etc don't work, and I don't even know if my goal is true at all.
-Before
-continuing my proof, I'd like a quick diagnosis, by a bleeding edge tool, on
-whether the goal actually is true, but I don't feel like installing any
-plugins or additional tools.
-In this talk, I will demo a quick way to achieve this: I will go to
-<a href="https://github.com/samuelgruetter/coq-smt-notations">https://github.com/samuelgruetter/coq-smt-notations</a>, copy-paste a few lines
-of Ltac and Coq notations right into my proof buffer (no need to compile
-anything or to reprocess anything in the IDE), and I get the negation of my
-goal printed in smtlib format. I don't even need to install an SMT solver,
-but I can just copy-paste this into the online Z3 solver available at
-<a href="https://rise4fun.com/z3">https://rise4fun.com/z3</a>, and immediately get <span class="inlinecode"><span class="id" title="var">unsat</span></span>, which means I should
-continue my proof, or a counterexample, which helps me figure out what's
-wrong.
+Suppose I am despairing on a Coq proof goal about integers, and I have no idea if it
+is true or not.
+For instance, while trying to prove that encoding and then decoding a RISCV instruction
+is the identity function, I ended up with the following proof goal:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode">&nbsp;&nbsp;<span class="id" title="var">opcode</span>, <span class="id" title="var">rs1</span>, <span class="id" title="var">rs2</span>, <span class="id" title="var">funct3</span>, <span class="id" title="var">simm12</span>, <span class="id" title="var">inst</span>, <span class="id" title="var">q</span>, <span class="id" title="var">q0</span>, <span class="id" title="var">r1</span>, <span class="id" title="var">r2</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">r</span>, <span class="id" title="var">r0</span>, <span class="id" title="var">q1</span>, <span class="id" title="var">q2</span>, <span class="id" title="var">q3</span>, <span class="id" title="var">r3</span>, <span class="id" title="var">q4</span>, <span class="id" title="var">r4</span>, <span class="id" title="var">q5</span>, <span class="id" title="var">r5</span>, <span class="id" title="var">q6</span>, <span class="id" title="var">r6</span>, <span class="id" title="var">q7</span>, <span class="id" title="var">r7</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">q8</span>, <span class="id" title="var">r8</span>, <span class="id" title="var">q9</span>, <span class="id" title="var">r9</span>, <span class="id" title="var">q10</span>, <span class="id" title="var">r10</span>, <span class="id" title="var">q11</span>, <span class="id" title="var">r11</span>, <span class="id" title="var">q12</span>, <span class="id" title="var">r12</span>, <span class="id" title="var">q13</span>, <span class="id" title="var">r13</span>,<br/>
+&nbsp;&nbsp;<span class="id" title="var">q14</span>, <span class="id" title="var">r14</span>, <span class="id" title="var">q15</span>, <span class="id" title="var">r15</span>, <span class="id" title="var">q16</span>, <span class="id" title="var">r16</span> : <span class="id" title="var">Z</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H</span> : 0 &lt;= <span class="id" title="var">opcode</span> &lt; 128 /\ 0 &lt;= <span class="id" title="var">rs1</span> &lt; 32 /\ 0 &lt;= <span class="id" title="var">rs2</span> &lt; 32 /\<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">funct3</span> &lt; 8 /\ - (2048) &lt;= <span class="id" title="var">simm12</span> &lt; 2048<br/>
+&nbsp;&nbsp;<span class="id" title="var">H0</span> : <span class="id" title="var">opcode</span> + <span class="id" title="var">r1</span> * 128 + <span class="id" title="var">funct3</span> * 4096 + <span class="id" title="var">rs1</span> * 32768 +<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rs2</span> * 1048576 + <span class="id" title="var">r2</span> * 33554432 = <span class="id" title="var">inst</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H1</span> : 0 &lt;= <span class="id" title="var">r16</span> &lt; 2<br/>
+&nbsp;&nbsp;<span class="id" title="var">H2</span> : <span class="id" title="var">q9</span> = 2 * <span class="id" title="var">q16</span> + <span class="id" title="var">r16</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H3</span> : 0 &lt;= <span class="id" title="var">r15</span> &lt; 32<br/>
+&nbsp;&nbsp;<span class="id" title="var">H4</span> : <span class="id" title="var">q6</span> = 32 * <span class="id" title="var">q15</span> + <span class="id" title="var">r15</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H5</span> : 0 &lt;= <span class="id" title="var">r14</span> &lt; 32<br/>
+&nbsp;&nbsp;<span class="id" title="var">H6</span> : <span class="id" title="var">q5</span> = 32 * <span class="id" title="var">q14</span> + <span class="id" title="var">r14</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H7</span> : 0 &lt;= <span class="id" title="var">r13</span> &lt; 8<br/>
+&nbsp;&nbsp;<span class="id" title="var">H8</span> : <span class="id" title="var">q4</span> = 8 * <span class="id" title="var">q13</span> + <span class="id" title="var">r13</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H9</span> : 0 &lt;= <span class="id" title="var">r12</span> &lt; 128<br/>
+&nbsp;&nbsp;<span class="id" title="var">H10</span> : <span class="id" title="var">q3</span> = 128 * <span class="id" title="var">q12</span> + <span class="id" title="var">r12</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H11</span> : 0 &lt;= <span class="id" title="var">r11</span> &lt; 32<br/>
+&nbsp;&nbsp;<span class="id" title="var">H12</span> : <span class="id" title="var">q8</span> = 32 * <span class="id" title="var">q11</span> + <span class="id" title="var">r11</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H13</span> : 0 &lt;= <span class="id" title="var">r10</span> &lt; 128<br/>
+&nbsp;&nbsp;<span class="id" title="var">H14</span> : <span class="id" title="var">q7</span> = 128 * <span class="id" title="var">q10</span> + <span class="id" title="var">r10</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H15</span> : 0 &lt;= <span class="id" title="var">r9</span> &lt; 2048<br/>
+&nbsp;&nbsp;<span class="id" title="var">H16</span> : <span class="id" title="var">r10</span> * 32 + <span class="id" title="var">r11</span> = 2048 * <span class="id" title="var">q9</span> + <span class="id" title="var">r9</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H17</span> : 0 &lt;= <span class="id" title="var">r8</span> &lt; 128<br/>
+&nbsp;&nbsp;<span class="id" title="var">H18</span> : <span class="id" title="var">inst</span> = 128 * <span class="id" title="var">q8</span> + <span class="id" title="var">r8</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H19</span> : 0 &lt;= <span class="id" title="var">r7</span> &lt; 33554432<br/>
+&nbsp;&nbsp;<span class="id" title="var">H20</span> : <span class="id" title="var">inst</span> = 33554432 * <span class="id" title="var">q7</span> + <span class="id" title="var">r7</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H21</span> : 0 &lt;= <span class="id" title="var">r6</span> &lt; 1048576<br/>
+&nbsp;&nbsp;<span class="id" title="var">H22</span> : <span class="id" title="var">inst</span> = 1048576 * <span class="id" title="var">q6</span> + <span class="id" title="var">r6</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H23</span> : 0 &lt;= <span class="id" title="var">r5</span> &lt; 32768<br/>
+&nbsp;&nbsp;<span class="id" title="var">H24</span> : <span class="id" title="var">inst</span> = 32768 * <span class="id" title="var">q5</span> + <span class="id" title="var">r5</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H25</span> : 0 &lt;= <span class="id" title="var">r4</span> &lt; 4096<br/>
+&nbsp;&nbsp;<span class="id" title="var">H26</span> : <span class="id" title="var">inst</span> = 4096 * <span class="id" title="var">q4</span> + <span class="id" title="var">r4</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H27</span> : 0 &lt;= <span class="id" title="var">r3</span> &lt; 1<br/>
+&nbsp;&nbsp;<span class="id" title="var">H28</span> : <span class="id" title="var">inst</span> = 1 * <span class="id" title="var">q3</span> + <span class="id" title="var">r3</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H29</span> : 0 &lt;= <span class="id" title="var">r2</span> &lt; 128<br/>
+&nbsp;&nbsp;<span class="id" title="var">H30</span> : <span class="id" title="var">q0</span> = 128 * <span class="id" title="var">q2</span> + <span class="id" title="var">r2</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H31</span> : 0 &lt;= <span class="id" title="var">r1</span> &lt; 32<br/>
+&nbsp;&nbsp;<span class="id" title="var">H32</span> : <span class="id" title="var">q</span> = 32 * <span class="id" title="var">q1</span> + <span class="id" title="var">r1</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H33</span> : 0 &lt;= <span class="id" title="var">r0</span> &lt; 32<br/>
+&nbsp;&nbsp;<span class="id" title="var">H34</span> : <span class="id" title="var">simm12</span> = 32 * <span class="id" title="var">q0</span> + <span class="id" title="var">r0</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H35</span> : 0 &lt;= <span class="id" title="var">r</span> &lt; 1<br/>
+&nbsp;&nbsp;<span class="id" title="var">H36</span> : <span class="id" title="var">simm12</span> = 1 * <span class="id" title="var">q</span> + <span class="id" title="var">r</span><br/>
+&nbsp;&nbsp;─────────────────────────────────────────────────────────<br/>
+&nbsp;&nbsp;<span class="id" title="var">opcode</span> = <span class="id" title="var">r12</span> /\ <span class="id" title="var">funct3</span> = <span class="id" title="var">r13</span> /\ <span class="id" title="var">rs1</span> = <span class="id" title="var">r14</span> /\ <span class="id" title="var">rs2</span> = <span class="id" title="var">r15</span> /\<br/>
+&nbsp;&nbsp;<span class="id" title="var">simm12</span> = <span class="id" title="var">r10</span> * 32 + <span class="id" title="var">r11</span> - <span class="id" title="var">r16</span> * 4096
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+It looks like linear arithmetic, so let's try <span class="inlinecode"><span class="id" title="tactic">omega</span></span>, but it fails with
+<span class="inlinecode"><span class="id" title="var">Omega</span></span> <span class="inlinecode"><span class="id" title="var">can't</span></span> <span class="inlinecode"><span class="id" title="tactic">solve</span></span> <span class="inlinecode"><span class="id" title="var">this</span></span> <span class="inlinecode"><span class="id" title="var">system</span></span>.
 
 </div>
 <div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Fail</span> <span class="id" title="tactic">omega</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And <span class="inlinecode"><span class="id" title="var">lia</span></span> and <span class="inlinecode"><span class="id" title="var">nia</span></span> don't work either:
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Fail</span> <span class="id" title="var">Timeout</span> 10 <span class="id" title="var">lia</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Fail</span> <span class="id" title="var">Timeout</span> 10 <span class="id" title="var">nia</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+So before continuing my proof, I'd like a quick diagnosis, by a bleeding edge tool, on
+whether the goal actually is true.
+But I'm lazy I don't feel like installing any plugins or additional tools.
+So here's a quick and simple way to get such a diagnosis:
+
+<div class="paragraph"> </div>
+
+I open a browser and google for Samuel Gruetter's <a href="https://github.com/samuelgruetter/">github account</a>, click on the repo called <a href="https://github.com/samuelgruetter/coq-smt-notations">coq-smt-notations</a>, and then on the file <a href="https://github.com/samuelgruetter/coq-smt-notations/blob/master/smt_demo.v">smt_demo.v</a>.
+
+<div class="paragraph"> </div>
+
+There, I scroll down to the <span class="inlinecode"><span class="id" title="var">BEGIN</span></span> <span class="inlinecode"><span class="id" title="var">code</span></span> <span class="inlinecode"><span class="id" title="var">to</span></span> <span class="inlinecode"><span class="id" title="var">copy</span></span> <span class="inlinecode"><span class="id" title="var">paste</span></span> marker, copy the code until
+the <span class="inlinecode"><span class="id" title="var">END</span></span> <span class="inlinecode"><span class="id" title="var">code</span></span> <span class="inlinecode"><span class="id" title="var">to</span></span> <span class="inlinecode"><span class="id" title="var">copy</span></span> <span class="inlinecode"><span class="id" title="var">paste</span></span> marker, and paste it right into my proof buffer.
+No need to compile anything or to reprocess anything in the IDE!
+
+<div class="paragraph"> </div>
+
+The purpose of this code is to turn my proof goal into a query for an SMT solver.
+It does so by reformulating the goal as the question "Is the negation of this goal satisfiable?",
+which is equivalent to asking "Is there a counterexample?".
+
+<div class="paragraph"> </div>
+
+So the first part of the copy-pasted code negates the goal of the form <span class="inlinecode"><span class="id" title="keyword">forall</span></span> <span class="inlinecode">…,</span> <span class="inlinecode">…</span> into
+<span class="inlinecode">~</span> <span class="inlinecode"><span class="id" title="keyword">forall</span></span> <span class="inlinecode">…,</span> <span class="inlinecode">…</span>, and then rewrites it into <span class="inlinecode"><span class="id" title="tactic">exists</span></span> <span class="inlinecode">…,</span> <span class="inlinecode">~</span> <span class="inlinecode">…</span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coq.Logic.Classical_Prop</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="marker"><span class="id" title="definition">marker</span></a>(<span class="id" title="var">P</span>: <span class="id" title="keyword">Prop</span>): <span class="id" title="keyword">Prop</span> := <a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="marker2"><span class="id" title="definition">marker2</span></a>(<span class="id" title="var">P</span>: <span class="id" title="keyword">Prop</span>): <span class="id" title="keyword">Prop</span> := <a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="EE"><span class="id" title="lemma">EE</span></a>: <span class="id" title="keyword">forall</span> <span class="id" title="var">AA</span> (<span class="id" title="var">P</span>: <a class="idref" href="CoqSmtNotations.html#AA"><span class="id" title="variable">AA</span></a> <span class="id" title="notation">-&gt;</span> <span class="id" title="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><span class="id" title="notation">exists</span> <span class="id" title="var">a</span>: <a class="idref" href="CoqSmtNotations.html#AA"><span class="id" title="variable">AA</span></a><span class="id" title="notation">,</span> <span class="id" title="notation">~</span> <a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="CoqSmtNotations.html#a"><span class="id" title="variable">a</span></a><span class="id" title="notation">)</span> <span class="id" title="notation">&lt;-&gt;</span> <span class="id" title="notation">~</span> <span class="id" title="keyword">forall</span> (<span class="id" title="var">a</span>: <a class="idref" href="CoqSmtNotations.html#AA"><span class="id" title="variable">AA</span></a>), <a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="CoqSmtNotations.html#a"><span class="id" title="variable">a</span></a>.<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">split</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">destruct</span> <span class="id" title="var">H</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">a</span> <span class="id" title="var">H</span>]. <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;- <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="axiom">classic</span> (<span class="id" title="notation">exists</span> <span class="id" title="var">a</span> : <span class="id" title="var">AA</span><span class="id" title="notation">,</span> <span class="id" title="notation">~</span> <span class="id" title="var">P</span> <a class="idref" href="CoqSmtNotations.html#a"><span class="id" title="variable">a</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">as</span> [<span class="id" title="var">C</span> | <span class="id" title="var">C</span>]; [<span class="id" title="tactic">assumption</span>|].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exfalso</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">H</span>. <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="axiom">classic</span> (<span class="id" title="var">P</span> <span class="id" title="var">a</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">as</span> [<span class="id" title="var">D</span> | <span class="id" title="var">D</span>]; [<span class="id" title="tactic">assumption</span> |].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exfalso</span>. <span class="id" title="tactic">apply</span> <span class="id" title="var">C</span>. <span class="id" title="tactic">exists</span> <span class="id" title="var">a</span>. <span class="id" title="tactic">assumption</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Lemma</span> <a name="K"><span class="id" title="lemma">K</span></a>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">P</span> <span class="id" title="var">Q</span>: <span class="id" title="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><span class="id" title="notation">~</span> <a class="idref" href="CoqSmtNotations.html#marker"><span class="id" title="definition">marker</span></a> (<a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a> <span class="id" title="notation">-&gt;</span> <a class="idref" href="CoqSmtNotations.html#Q"><span class="id" title="variable">Q</span></a>)<span class="id" title="notation">)</span> <span class="id" title="notation">&lt;-&gt;</span> <a class="idref" href="CoqSmtNotations.html#marker"><span class="id" title="definition">marker</span></a> (<span class="id" title="notation">~</span> <span class="id" title="notation">(</span><a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a> <span class="id" title="notation">-&gt;</span> <a class="idref" href="CoqSmtNotations.html#Q"><span class="id" title="variable">Q</span></a><span class="id" title="notation">)</span>).<br/>
+<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">cbv</span> [<a class="idref" href="CoqSmtNotations.html#marker"><span class="id" title="definition">marker</span></a>]. <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">reflexivity</span>.<br/>
+<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Func"><span class="id" title="definition">Func</span></a>(<span class="id" title="var">A</span> <span class="id" title="var">B</span>: <span class="id" title="keyword">Type</span>) := <a class="idref" href="CoqSmtNotations.html#A"><span class="id" title="variable">A</span></a> <span class="id" title="notation">-&gt;</span> <a class="idref" href="CoqSmtNotations.html#B"><span class="id" title="variable">B</span></a>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;intro&nbsp;as&nbsp;much&nbsp;as&nbsp;we&nbsp;can&nbsp;*)</span><br/>
+<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;clear&nbsp;everything&nbsp;except&nbsp;used&nbsp;vars&nbsp;and&nbsp;Props&nbsp;*)</span><br/>
+<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">H</span>: ?<span class="id" title="var">T</span> |- <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">type</span> <span class="id" title="keyword">of</span> <span class="id" title="var">T</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">Prop</span> =&gt; <span class="id" title="tactic">fail</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;revert&nbsp;all&nbsp;Props&nbsp;*)</span><br/>
+<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">H</span>: ?<span class="id" title="var">T</span> |- <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">type</span> <span class="id" title="keyword">of</span> <span class="id" title="var">T</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">Prop</span> =&gt; <span class="id" title="var">revert</span> <span class="id" title="var">H</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;protect&nbsp;functions&nbsp;from&nbsp;being&nbsp;treated&nbsp;as&nbsp;implications&nbsp;*)</span><br/>
+<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">x</span>: ?<span class="id" title="var">T1</span> <span class="id" title="notation">-&gt;</span> ?<span class="id" title="var">T2</span> |- <span class="id" title="var">_</span> =&gt; <span class="id" title="tactic">change</span> (<a class="idref" href="CoqSmtNotations.html#Func"><span class="id" title="definition">Func</span></a> <span class="id" title="var">T1</span> <span class="id" title="var">T2</span>) <span class="id" title="tactic">in</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;mark&nbsp;where&nbsp;hyps&nbsp;begin&nbsp;*)</span><br/>
+<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+| |- ?<span class="id" title="var">G</span> =&gt; <span class="id" title="tactic">change</span> (<a class="idref" href="CoqSmtNotations.html#marker"><span class="id" title="definition">marker</span></a> <span class="id" title="var">G</span>)<br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;revert&nbsp;vars&nbsp;*)</span><br/>
+<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">x</span>: ?<span class="id" title="var">T</span> |- <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">T</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="keyword">Type</span> =&gt; <span class="id" title="tactic">fail</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">revert</span> <span class="id" title="var">x</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;negate&nbsp;goal&nbsp;*)</span><br/>
+<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+| |- ?<span class="id" title="var">P</span> =&gt; <span class="id" title="tactic">assert</span> (<span class="id" title="notation">~</span><span class="id" title="var">P</span>); [|<span class="id" title="var">admit</span>]<br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;"not&nbsp;forall"&nbsp;to&nbsp;"exists&nbsp;such&nbsp;that&nbsp;not"&nbsp;*)</span><br/>
+<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;| |- <span class="id" title="keyword">context</span>[<span class="id" title="notation">~</span> <span class="id" title="notation">(</span><span class="id" title="keyword">forall</span> (<span class="id" title="var">x</span>: ?<span class="id" title="var">T</span>), <span class="id" title="var">_</span><span class="id" title="notation">)</span>] =&gt;<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">assert</span> (<span class="id" title="keyword">forall</span> (<span class="id" title="var">P</span>: <span class="id" title="var">T</span> <span class="id" title="notation">-&gt;</span> <span class="id" title="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><span class="id" title="notation">exists</span> <span class="id" title="var">x</span>: <span class="id" title="var">T</span><span class="id" title="notation">,</span> <span class="id" title="notation">~</span> <a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="CoqSmtNotations.html#x"><span class="id" title="variable">x</span></a><span class="id" title="notation">)</span> <span class="id" title="notation">&lt;-&gt;</span> <span class="id" title="notation">~</span> <span class="id" title="notation">(</span><span class="id" title="keyword">forall</span> <span class="id" title="var">x</span>: <span class="id" title="var">T</span>, <a class="idref" href="CoqSmtNotations.html#P"><span class="id" title="variable">P</span></a> <a class="idref" href="CoqSmtNotations.html#x"><span class="id" title="variable">x</span></a><span class="id" title="notation">)</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">as</span> <span class="id" title="var">EEE</span> <span class="id" title="tactic">by</span> <span class="id" title="tactic">apply</span> <a class="idref" href="CoqSmtNotations.html#EE"><span class="id" title="lemma">EE</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">setoid_rewrite</span> &lt;- <span class="id" title="var">EEE</span>;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">clear</span> <span class="id" title="var">EEE</span><br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;push&nbsp;"not"&nbsp;into&nbsp;marker&nbsp;*)</span><br/>
+<span class="id" title="tactic">setoid_rewrite</span> <a class="idref" href="CoqSmtNotations.html#K"><span class="id" title="lemma">K</span></a>.<br/>
+
+<br/>
+<span class="comment">(*&nbsp;marker&nbsp;for&nbsp;check_sat&nbsp;*)</span><br/>
+<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+| |- ?<span class="id" title="var">P</span> =&gt; <span class="id" title="tactic">change</span> (<a class="idref" href="CoqSmtNotations.html#marker2"><span class="id" title="definition">marker2</span></a> <span class="id" title="var">P</span>)<br/>
+<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Set</span> <span class="id" title="keyword">Printing</span> <span class="id" title="var">Depth</span> 10000.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+After processing this code, the proof goal looks as follows:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode">&nbsp;&nbsp;───────────────────────────────────────────────────────<br/>
+&nbsp;&nbsp;<span class="id" title="var">marker2</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">exists</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opcode</span> <span class="id" title="var">rs1</span> <span class="id" title="var">rs2</span> <span class="id" title="var">funct3</span> <span class="id" title="var">simm12</span> <span class="id" title="var">inst</span> <span class="id" title="var">q</span> <span class="id" title="var">q0</span> <span class="id" title="var">r1</span> <span class="id" title="var">r2</span> <span class="id" title="var">r</span> <span class="id" title="var">r0</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q1</span> <span class="id" title="var">q2</span> <span class="id" title="var">q3</span> <span class="id" title="var">r3</span> <span class="id" title="var">q4</span> <span class="id" title="var">r4</span> <span class="id" title="var">q5</span> <span class="id" title="var">r5</span> <span class="id" title="var">q6</span> <span class="id" title="var">r6</span> <span class="id" title="var">q7</span> <span class="id" title="var">r7</span> <span class="id" title="var">q8</span> <span class="id" title="var">r8</span> <span class="id" title="var">q9</span> <span class="id" title="var">r9</span> <span class="id" title="var">q10</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">r10</span> <span class="id" title="var">q11</span> <span class="id" title="var">r11</span> <span class="id" title="var">q12</span> <span class="id" title="var">r12</span> <span class="id" title="var">q13</span> <span class="id" title="var">r13</span> <span class="id" title="var">q14</span> <span class="id" title="var">r14</span> <span class="id" title="var">q15</span> <span class="id" title="var">r15</span> <span class="id" title="var">q16</span> <span class="id" title="var">r16</span> : <span class="id" title="var">Z</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">marker</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(~<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(0 &lt;= <span class="id" title="var">opcode</span> &lt; 128 /\ 0 &lt;= <span class="id" title="var">rs1</span> &lt; 32 /\ 0 &lt;= <span class="id" title="var">rs2</span> &lt; 32 /\<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">funct3</span> &lt; 8 /\ - (2048) &lt;= <span class="id" title="var">simm12</span> &lt; 2048 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opcode</span> + <span class="id" title="var">r1</span> * 128 + <span class="id" title="var">funct3</span> * 4096 + <span class="id" title="var">rs1</span> * 32768 +<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rs2</span> * 1048576 + <span class="id" title="var">r2</span> * 33554432 = <span class="id" title="var">inst</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r16</span> &lt; 2 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q9</span> = 2 * <span class="id" title="var">q16</span> + <span class="id" title="var">r16</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r15</span> &lt; 32 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q6</span> = 32 * <span class="id" title="var">q15</span> + <span class="id" title="var">r15</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r14</span> &lt; 32 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q5</span> = 32 * <span class="id" title="var">q14</span> + <span class="id" title="var">r14</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r13</span> &lt; 8 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q4</span> = 8 * <span class="id" title="var">q13</span> + <span class="id" title="var">r13</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r12</span> &lt; 128 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q3</span> = 128 * <span class="id" title="var">q12</span> + <span class="id" title="var">r12</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r11</span> &lt; 32 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q8</span> = 32 * <span class="id" title="var">q11</span> + <span class="id" title="var">r11</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r10</span> &lt; 128 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q7</span> = 128 * <span class="id" title="var">q10</span> + <span class="id" title="var">r10</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r9</span> &lt; 2048 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">r10</span> * 32 + <span class="id" title="var">r11</span> = 2048 * <span class="id" title="var">q9</span> + <span class="id" title="var">r9</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r8</span> &lt; 128 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inst</span> = 128 * <span class="id" title="var">q8</span> + <span class="id" title="var">r8</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r7</span> &lt; 33554432 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inst</span> = 33554432 * <span class="id" title="var">q7</span> + <span class="id" title="var">r7</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r6</span> &lt; 1048576 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inst</span> = 1048576 * <span class="id" title="var">q6</span> + <span class="id" title="var">r6</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r5</span> &lt; 32768 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inst</span> = 32768 * <span class="id" title="var">q5</span> + <span class="id" title="var">r5</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r4</span> &lt; 4096 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inst</span> = 4096 * <span class="id" title="var">q4</span> + <span class="id" title="var">r4</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r3</span> &lt; 1 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inst</span> = 1 * <span class="id" title="var">q3</span> + <span class="id" title="var">r3</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r2</span> &lt; 128 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q0</span> = 128 * <span class="id" title="var">q2</span> + <span class="id" title="var">r2</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r1</span> &lt; 32 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">q</span> = 32 * <span class="id" title="var">q1</span> + <span class="id" title="var">r1</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r0</span> &lt; 32 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">simm12</span> = 32 * <span class="id" title="var">q0</span> + <span class="id" title="var">r0</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &lt;= <span class="id" title="var">r</span> &lt; 1 -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">simm12</span> = 1 * <span class="id" title="var">q</span> + <span class="id" title="var">r</span> -&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">opcode</span> = <span class="id" title="var">r12</span> /\ <span class="id" title="var">funct3</span> = <span class="id" title="var">r13</span> /\ <span class="id" title="var">rs1</span> = <span class="id" title="var">r14</span> /\<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">rs2</span> = <span class="id" title="var">r15</span> /\ <span class="id" title="var">simm12</span> = <span class="id" title="var">r10</span> * 32 + <span class="id" title="var">r11</span> - <span class="id" title="var">r16</span> * 4096)))
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+After that, the second part of the copy-pasted code introduces a few notations which
+pretty-print the goal in smtlib2 format, which is the standard input format for SMT solvers.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="1dc090af3fdcb0f754fc725fed5dd9f9"><span class="id" title="notation">&quot;</span></a>'and' A B" := (<span class="id" title="inductive">Logic.and</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="54c97db3dc0c6e7fe0492ac7e7773fcd"><span class="id" title="notation">&quot;</span></a>'or' A B" := (<span class="id" title="inductive">Logic.or</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="7a149a199d59c0287a522f95f37aa433"><span class="id" title="notation">&quot;</span></a>+ A B" := (<span class="id" title="definition">Z.add</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="192e6489657a9a78020c26fa84204d59"><span class="id" title="notation">&quot;</span></a>&lt; A B" := (<span class="id" title="definition">Z.lt</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="1b78cd069b6850d54922d282e9302fe4"><span class="id" title="notation">&quot;</span></a>&lt;= A B" := (<span class="id" title="definition">Z.le</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="ad7d78bad9b7cbbfecf5b4a82db70eb3"><span class="id" title="notation">&quot;</span></a>- A B" := (<span class="id" title="definition">Z.sub</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="a14a895610cb4f6fa8efb77367cda2af"><span class="id" title="notation">&quot;</span></a>* A B" := (<span class="id" title="definition">Z.mul</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">format</span> " *  A  B").<br/>
+<span class="id" title="keyword">Notation</span> <a name="dc15a29ee89d6bc90407b853e8cf82ba"><span class="id" title="notation">&quot;</span></a>^ A B" := (<span class="id" title="definition">Z.pow</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="c936d0428f7829c49e5780b8bb446951"><span class="id" title="notation">&quot;</span></a>= A B" := (@<span class="id" title="inductive">eq</span> <span class="id" title="inductive">Z</span> <span class="id" title="var">A</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="c4c075f1ac2e14ed5342bdd4f153ec25"><span class="id" title="notation">&quot;</span></a>'not' A" := (<span class="id" title="definition">not</span> <span class="id" title="var">A</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="7fbc774ebb9adf47c9a4142dc530ea66"><span class="id" title="notation">&quot;</span></a>'(declare-const' a 'Int)' body" :=<br/>
+&nbsp;&nbsp;(<span class="id" title="inductive">ex</span> (<span class="id" title="keyword">fun</span> (<span class="id" title="var">a</span>: <span class="id" title="inductive">Z</span>) =&gt; <span class="id" title="var">body</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">body</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">format</span> "(declare-const  a  Int) '//' body").<br/>
+<span class="id" title="keyword">Notation</span> <a name="e729e4b6b346d051172c5dbe1c5596f9"><span class="id" title="notation">&quot;</span></a>'(assert' P ')'" := (<a class="idref" href="CoqSmtNotations.html#marker"><span class="id" title="definition">marker</span></a> <span class="id" title="var">P</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">P</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">format</span> "(assert  P )").<br/>
+<span class="id" title="keyword">Notation</span> <a name="b112c9948dd2f18c21b95232b00c94a4"><span class="id" title="notation">&quot;</span></a>- 0 a" := (<span class="id" title="definition">Z.opp</span> <span class="id" title="var">a</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">a</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10).<br/>
+<span class="id" title="keyword">Notation</span> <a name="9622c8eaccc8838856d097978cc610f0"><span class="id" title="notation">&quot;</span></a>'implies' A B" := (<span class="id" title="var">A</span> <span class="id" title="notation">-&gt;</span> <span class="id" title="var">B</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 10, <span class="id" title="var">A</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0, <span class="id" title="var">B</span> <span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 0).<br/>
+<span class="id" title="keyword">Notation</span> <a name="98346c682d329f1bb1ce4c7cfcc7bdbd"><span class="id" title="notation">&quot;</span></a>x '(check-sat)'" := (<a class="idref" href="CoqSmtNotations.html#marker2"><span class="id" title="definition">marker2</span></a> <span class="id" title="var">x</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">at</span> <span class="id" title="keyword">level</span> 200, <span class="id" title="var">format</span> "x '//' '(check-sat)'").<br/>
+
+<br/>
+<span class="comment">(*&nbsp;refresh&nbsp;*)</span><br/>
+<span class="id" title="tactic">idtac</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+After processing that code (and going back up one step if the IDE doesn't refresh the proof
+goal), the goal is printed as follows:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode">&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">opcode</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">rs1</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">rs2</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">funct3</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">simm12</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">inst</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q0</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r1</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r2</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r0</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q1</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q2</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q3</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r3</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q4</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r4</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q5</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r5</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q6</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r6</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q7</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r7</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q8</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r8</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q9</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r9</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q10</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r10</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q11</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r11</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q12</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r12</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q13</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r13</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q14</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r14</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q15</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r15</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">q16</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">declare</span>-<span class="id" title="var">const</span> <span class="id" title="var">r16</span> <span class="id" title="var">Int</span>)<br/>
+&nbsp;&nbsp;(<span class="id" title="tactic">assert</span> (<span class="id" title="var">not</span> (<span class="id" title="var">implies</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">opcode</span>) (&lt; <span class="id" title="var">opcode</span> 128))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">rs1</span>) (&lt; <span class="id" title="var">rs1</span> 32))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">rs2</span>) (&lt; <span class="id" title="var">rs2</span> 32))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">funct3</span>) (&lt; <span class="id" title="var">funct3</span> 8))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (&lt;= (- 0 2048) <span class="id" title="var">simm12</span>) (&lt; <span class="id" title="var">simm12</span> 2048))))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= (+ (+ (+ (+ (+ <span class="id" title="var">opcode</span> ( * <span class="id" title="var">r1</span> 128))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( * <span class="id" title="var">funct3</span> 4096)) ( * <span class="id" title="var">rs1</span> 32768))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( * <span class="id" title="var">rs2</span> 1048576)) ( * <span class="id" title="var">r2</span> 33554432)) <span class="id" title="var">inst</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r16</span>) (&lt; <span class="id" title="var">r16</span> 2))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q9</span> (+ ( * 2 <span class="id" title="var">q16</span>) <span class="id" title="var">r16</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r15</span>) (&lt; <span class="id" title="var">r15</span> 32))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q6</span> (+ ( * 32 <span class="id" title="var">q15</span>) <span class="id" title="var">r15</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r14</span>) (&lt; <span class="id" title="var">r14</span> 32))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q5</span> (+ ( * 32 <span class="id" title="var">q14</span>) <span class="id" title="var">r14</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r13</span>) (&lt; <span class="id" title="var">r13</span> 8))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q4</span> (+ ( * 8 <span class="id" title="var">q13</span>) <span class="id" title="var">r13</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r12</span>) (&lt; <span class="id" title="var">r12</span> 128))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q3</span> (+ ( * 128 <span class="id" title="var">q12</span>) <span class="id" title="var">r12</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r11</span>) (&lt; <span class="id" title="var">r11</span> 32))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q8</span> (+ ( * 32 <span class="id" title="var">q11</span>) <span class="id" title="var">r11</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r10</span>) (&lt; <span class="id" title="var">r10</span> 128))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q7</span> (+ ( * 128 <span class="id" title="var">q10</span>) <span class="id" title="var">r10</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r9</span>) (&lt; <span class="id" title="var">r9</span> 2048))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= (+ ( * <span class="id" title="var">r10</span> 32) <span class="id" title="var">r11</span>) (+ ( * 2048 <span class="id" title="var">q9</span>) <span class="id" title="var">r9</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r8</span>) (&lt; <span class="id" title="var">r8</span> 128))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">inst</span> (+ ( * 128 <span class="id" title="var">q8</span>) <span class="id" title="var">r8</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r7</span>) (&lt; <span class="id" title="var">r7</span> 33554432))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">inst</span> (+ ( * 33554432 <span class="id" title="var">q7</span>) <span class="id" title="var">r7</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r6</span>) (&lt; <span class="id" title="var">r6</span> 1048576))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">inst</span> (+ ( * 1048576 <span class="id" title="var">q6</span>) <span class="id" title="var">r6</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r5</span>) (&lt; <span class="id" title="var">r5</span> 32768))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">inst</span> (+ ( * 32768 <span class="id" title="var">q5</span>) <span class="id" title="var">r5</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r4</span>) (&lt; <span class="id" title="var">r4</span> 4096))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">inst</span> (+ ( * 4096 <span class="id" title="var">q4</span>) <span class="id" title="var">r4</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r3</span>) (&lt; <span class="id" title="var">r3</span> 1))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">inst</span> (+ ( * 1 <span class="id" title="var">q3</span>) <span class="id" title="var">r3</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r2</span>) (&lt; <span class="id" title="var">r2</span> 128))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q0</span> (+ ( * 128 <span class="id" title="var">q2</span>) <span class="id" title="var">r2</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r1</span>) (&lt; <span class="id" title="var">r1</span> 32))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">q</span> (+ ( * 32 <span class="id" title="var">q1</span>) <span class="id" title="var">r1</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r0</span>) (&lt; <span class="id" title="var">r0</span> 32))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">simm12</span> (+ ( * 32 <span class="id" title="var">q0</span>) <span class="id" title="var">r0</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r</span>) (&lt; <span class="id" title="var">r</span> 1))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">implies</span> (= <span class="id" title="var">simm12</span> (+ ( * 1 <span class="id" title="var">q</span>) <span class="id" title="var">r</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (= <span class="id" title="var">opcode</span> <span class="id" title="var">r12</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (= <span class="id" title="var">funct3</span> <span class="id" title="var">r13</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (= <span class="id" title="var">rs1</span> <span class="id" title="var">r14</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">and</span> (= <span class="id" title="var">rs2</span> <span class="id" title="var">r15</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(= <span class="id" title="var">simm12</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(- (+ ( * <span class="id" title="var">r10</span> 32) <span class="id" title="var">r11</span>) ( * <span class="id" title="var">r16</span> 4096))))))))<br/>
+&nbsp;&nbsp;)))))))))))))))))))))))))))))))))))))))<br/>
+&nbsp;&nbsp;(<span class="id" title="var">check</span>-<span class="id" title="var">sat</span>)
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+Now I want to feed this into an SMT solver, but I'm too lazy to install one, so I just google
+for "Z3 online" and click on the top result, which takes me to <a href="https://rise4fun.com/z3">https://rise4fun.com/z3</a>.
+
+<div class="paragraph"> </div>
+
+I can copy-paste the above smtlib code into the text field on this web interface, click on
+the ▶ button, and after a few seconds, it answers <span class="inlinecode"><span class="id" title="var">unsat</span></span>, which means that there's
+no counterexample, so the goal holds, and I know that it makes sense to try to prove it.
+
+<div class="paragraph"> </div>
+
+On the other hand, if the goal was not true, Z3 will answer <span class="inlinecode"><span class="id" title="var">sat</span></span>.
+For instance, replacing <span class="inlinecode">8</span> by <span class="inlinecode">9</span> in the line
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode">(<span class="id" title="var">implies</span> (<span class="id" title="var">and</span> (&lt;= 0 <span class="id" title="var">r13</span>) (&lt; <span class="id" title="var">r13</span> 8))
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+can illustrate this, and if <span class="inlinecode">(<span class="id" title="var">get</span>-<span class="id" title="var">model</span>)</span> is appended at the end of the input, it will print the following counterexample:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode">(<span class="id" title="var">model</span><br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r1</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;31)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q13</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;833)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r12</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;74)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q15</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">rs1</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q11</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;6672)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">opcode</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;74)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q10</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r10</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r0</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;31)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q14</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;26)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q1</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r2</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">rs2</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;26)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r16</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r14</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q2</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q16</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r9</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;31)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">funct3</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q12</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;213535)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r15</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;26)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r13</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;8)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">simm12</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;31)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;31)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q0</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r3</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r4</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4042)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r5</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4042)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r6</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;69578)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r7</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;27332554)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r8</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;74)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q7</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q8</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;213535)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">r11</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;31)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q3</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;27332554)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q4</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;6672)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q5</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;834)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q6</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;26)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">q9</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;0)<br/>
+&nbsp;&nbsp;(<span class="id" title="var">define</span>-<span class="id" title="keyword">fun</span> <span class="id" title="var">inst</span> () <span class="id" title="var">Int</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;27332554)<br/>
+)
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+Knowing a counterexample can be helpful in figuring out how to strenghten the hypotheses of
+a lemma to make it true.
+For instance, in the above counterexample, <span class="inlinecode"><span class="id" title="var">r13</span></span> is assigned the value <span class="inlinecode">8</span>, so the above
+relaxation was indeed exploited by Z3 in order to find the counterexample.
+
+<div class="paragraph"> </div>
+
+So that's it: A quick and simple way to diagnose if a Coq goal about integers is true,
+which requires no installation of additional tools, and not even requires to reprocess
+the current proof buffer.
+All you need to do to use it is to copy-paste some code from <a href="https://github.com/samuelgruetter/coq-smt-notations/blob/master/smt_demo.v">this file</a>.
+
+</div>
+<div class="code">
+
+<br/>
 </div>
