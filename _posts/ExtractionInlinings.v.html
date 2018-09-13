@@ -1,0 +1,251 @@
+<div class="code">
+</div>
+
+<div class="doc">
+In the following, I will use OCaml extraction instead of JSON extraction,
+    because the puzzlers are the same, but OCaml code is much more concise than
+    JSON code.
+
+<div class="paragraph"> </div>
+
+    The original puzzler was the following:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="library">Extraction</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="foo"><span class="id" title="definition">foo</span></a>(<span class="id" title="var">a</span> <span class="id" title="var">b</span>: <span class="id" title="inductive">bool</span>): <span class="id" title="inductive">bool</span> := <span class="id" title="definition">orb</span> <a class="idref" href="ExtractionInlinings.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtractionInlinings.html#b"><span class="id" title="variable">b</span></a>.<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">Language</span> <span class="id" title="var">OCaml</span>.<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">foo</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Instead of outputting
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">foo</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">orb</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+it outputs
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">foo</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">a</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">True</span> -&gt; <span class="id" title="var">True</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">False</span> -&gt; <span class="id" title="var">b</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+so <span class="inlinecode"><span class="id" title="var">orb</span></span> got silently unfolded, even though we never told Coq to do so.
+
+<div class="paragraph"> </div>
+
+Let's try another extraction language:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">Language</span> <span class="id" title="var">Haskell</span>.<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">foo</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And suddenly we get what we want:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">foo</span> :: <span class="id" title="var">Bool</span> -&gt; <span class="id" title="var">Bool</span> -&gt; <span class="id" title="var">Bool</span><br/>
+<span class="id" title="var">foo</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">orb</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+What if we define our own <span class="inlinecode"><span class="id" title="var">orb</span></span>?
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="myorb"><span class="id" title="definition">myorb</span></a>(<span class="id" title="var">b1</span> <span class="id" title="var">b2</span> : <span class="id" title="inductive">bool</span>) := <span class="id" title="keyword">if</span> <a class="idref" href="ExtractionInlinings.html#b1"><span class="id" title="variable">b1</span></a> <span class="id" title="keyword">then</span> <span class="id" title="constructor">true</span> <span class="id" title="keyword">else</span> <a class="idref" href="ExtractionInlinings.html#b2"><span class="id" title="variable">b2</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="foo'"><span class="id" title="definition">foo'</span></a>(<span class="id" title="var">a</span> <span class="id" title="var">b</span>: <span class="id" title="inductive">bool</span>): <span class="id" title="inductive">bool</span> := <a class="idref" href="ExtractionInlinings.html#myorb"><span class="id" title="definition">myorb</span></a> <a class="idref" href="ExtractionInlinings.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="ExtractionInlinings.html#b"><span class="id" title="variable">b</span></a>.<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">Language</span> <span class="id" title="var">OCaml</span>.<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">foo'</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We also get what we want:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">foo'</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">myorb</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+What if we mark <span class="inlinecode"><span class="id" title="var">foo</span></span> as opaque?
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Opaque</span> <a class="idref" href="ExtractionInlinings.html#foo"><span class="id" title="definition">foo</span></a>.<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">foo</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+No luck:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">foo</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">a</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">True</span> -&gt; <span class="id" title="var">True</span><br/>
+&nbsp;&nbsp;| <span class="id" title="var">False</span> -&gt; <span class="id" title="var">b</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+So we entered a clone of the Coq source code and played with some <span class="inlinecode"><span class="id" title="var">grep</span></span> commands like
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">grep</span> -<span class="id" title="var">R</span> . --<span class="id" title="var">include</span>='*.<span class="id" title="var">ml'</span> -<span class="id" title="var">e</span> '[^<span class="id" title="var">a</span>-<span class="id" title="var">zA</span>-<span class="id" title="var">Z</span>]<span class="id" title="var">orb</span>[^<span class="id" title="var">A</span>-<span class="id" title="var">Za</span>-<span class="id" title="var">z</span>]' -<span class="id" title="var">C3</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+which eventually pointed us to the file <span class="inlinecode"><span class="id" title="var">plugins</span>/<span class="id" title="var">extraction</span>/<span class="id" title="var">mlutil.ml</span></span>, which contains
+a list of hard-coded always-inlined constants:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">manual_inline_set</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">List.fold_right</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">x</span> -&gt; <span class="id" title="var">Cset_env.add</span> (<span class="id" title="var">con_of_string</span> <span class="id" title="var">x</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;[ "Coq.Init.Wf.well_founded_induction_type";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Wf.well_founded_induction";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Wf.Acc_iter";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Wf.Fix_F";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Wf.Fix";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Datatypes.andb";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Datatypes.orb";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Logic.eq_rec_r";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Logic.eq_rect_r";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Coq.Init.Specif.proj1_sig";<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;]<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Cset_env.empty</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+So that's why <span class="inlinecode"><span class="id" title="var">orb</span></span> was inlined, but <span class="inlinecode"><span class="id" title="var">myorb</span></span> was not!
+
+<div class="paragraph"> </div>
+
+And further down in that file, we see
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">inline</span> <span class="id" title="var">r</span> <span class="id" title="var">t</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">not</span> (<span class="id" title="var">to_keep</span> <span class="id" title="var">r</span>) <span class="comment">(*&nbsp;The&nbsp;user&nbsp;DOES&nbsp;want&nbsp;to&nbsp;keep&nbsp;it&nbsp;*)</span><br/>
+&nbsp;&nbsp;&amp;&amp; <span class="id" title="var">not</span> (<span class="id" title="var">is_inline_custom</span> <span class="id" title="var">r</span>)<br/>
+&nbsp;&nbsp;&amp;&amp; (<span class="id" title="var">to_inline</span> <span class="id" title="var">r</span> <span class="comment">(*&nbsp;The&nbsp;user&nbsp;DOES&nbsp;want&nbsp;to&nbsp;inline&nbsp;it&nbsp;*)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|| (<span class="id" title="var">lang</span> () != <span class="id" title="var">Haskell</span> &amp;&amp; <span class="id" title="var">not</span> (<span class="id" title="var">is_projection</span> <span class="id" title="var">r</span>) &amp;&amp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">is_recursor</span> <span class="id" title="var">r</span> || <span class="id" title="var">manual_inline</span> <span class="id" title="var">r</span> || <span class="id" title="var">inline_test</span> <span class="id" title="var">r</span> <span class="id" title="var">t</span>)))
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+so there's a special case for Haskell, which is why we got the desired result in Haskell,
+but not in OCaml.
+
+<div class="paragraph"> </div>
+
+Now, <i>why</i> are things so surprising and non-uniform? Is this a bug or a feature?
+After some thinking, I concluded that it's a feature:
+
+<div class="paragraph"> </div>
+
+In OCaml, which has strict evaluation semantics, we want to enable short-circuiting of
+boolean expressions. For instance, if the Coq source contains <span class="inlinecode"><span class="id" title="var">orb</span></span> <span class="inlinecode"><span class="id" title="var">somethingTrue</span></span> <span class="inlinecode"><span class="id" title="var">expensiveCalculation</span></span>,
+the <span class="inlinecode"><span class="id" title="var">expensiveCalculation</span></span> should not be evaluated in OCaml.
+This can be achieved by always inlining <span class="inlinecode"><span class="id" title="var">orb</span></span>, so that the OCaml code is
+<span class="inlinecode"><span class="id" title="keyword">if</span></span> <span class="inlinecode"><span class="id" title="var">somethingTrue</span></span> <span class="inlinecode"><span class="id" title="keyword">then</span></span> <span class="inlinecode"><span class="id" title="var">true</span></span> <span class="inlinecode"><span class="id" title="keyword">else</span></span> <span class="inlinecode"><span class="id" title="var">expensiveCalculation</span></span>.
+
+<div class="paragraph"> </div>
+
+On the other hand, Haskell has lazy evaluation semantics, so we don't need to do anything
+special in Haskell, but can just extract it to <span class="inlinecode"><span class="id" title="var">orb</span></span> <span class="inlinecode"><span class="id" title="var">somethingTrue</span></span> <span class="inlinecode"><span class="id" title="var">expensiveCalculation</span></span>,
+and <span class="inlinecode"><span class="id" title="var">expensiveCalculation</span></span> will be wrapped inside a thunk which is never evaluated.
+
+<div class="paragraph"> </div>
+
+So we now understand what's going on, but how do we get our example to behave the way it
+should?
+
+<div class="paragraph"> </div>
+
+It turns out that reading the <a href="https://coq.inria.fr/refman/addendum/extraction.html">manual page for Extraction</a> helps: It tells us about the vernac command <span class="inlinecode"><span class="id" title="keyword">Extraction</span></span> <span class="inlinecode"><span class="id" title="var">NoInline</span></span> <span class="inlinecode"><span class="id" title="var">qualid</span></span>, so
+we can do the following:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">NoInline</span> <span class="id" title="var">orb</span>.<br/>
+<span class="id" title="keyword">Extraction</span> <span class="id" title="var">foo</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+and woohoo, we get what we want:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">foo</span> =<br/>
+&nbsp;&nbsp;<span class="id" title="var">orb</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+Problem solved!
+
+</div>
+<div class="code">
+</div>
