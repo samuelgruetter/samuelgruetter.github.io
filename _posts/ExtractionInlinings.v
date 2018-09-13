@@ -10,14 +10,7 @@ Definition foo(a b: bool): bool := orb a b.
 Extraction Language OCaml.
 Extraction foo.
 
-(** Instead of outputting
-
-[[
-let foo =
-  orb
-]]
-
-it outputs
+(** It outputs
 
 [[
 let foo a b =
