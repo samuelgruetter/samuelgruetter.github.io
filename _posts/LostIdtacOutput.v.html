@@ -1,0 +1,230 @@
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+Let's illustrate this with an example: Suppose we're in a goal like
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode">&nbsp;&nbsp;<span class="id" title="var">U</span> : <span class="id" title="keyword">Type</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">a</span>, <span class="id" title="var">b</span>, <span class="id" title="var">c</span>, <span class="id" title="var">z</span> : <span class="id" title="var">U</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">P</span>, <span class="id" title="var">Q</span>, <span class="id" title="var">R</span> : <span class="id" title="var">U</span> -&gt; <span class="id" title="keyword">Prop</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">y</span> : <span class="id" title="var">U</span>, <span class="id" title="var">y</span> = <span class="id" title="var">a</span> \/ <span class="id" title="var">y</span> = <span class="id" title="var">b</span> \/ <span class="id" title="var">y</span> = <span class="id" title="var">c</span><br/>
+&nbsp;&nbsp;<span class="id" title="var">H0</span> : <span class="id" title="keyword">forall</span> <span class="id" title="var">y</span> : <span class="id" title="var">U</span>, <span class="id" title="var">P</span> <span class="id" title="var">y</span> -&gt; <span class="id" title="var">Q</span> <span class="id" title="var">y</span><br/>
+&nbsp;&nbsp;─────────────────────────────────────────────────────────<br/>
+&nbsp;&nbsp;<span class="id" title="var">R</span> <span class="id" title="var">z</span>
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+where we have a hypothesis like <span class="inlinecode"><span class="id" title="var">H</span></span> whose disjunction tells us what values
+variables of type <span class="inlinecode"><span class="id" title="var">U</span></span> can take, and suppose we want to write a tactic which
+collects a list of all possible values for variables of type <span class="inlinecode"><span class="id" title="var">U</span></span>,
+i.e. it should return the list <span class="inlinecode">[<span class="id" title="var">a</span>;</span> <span class="inlinecode"><span class="id" title="var">b</span>;</span> <span class="inlinecode"><span class="id" title="var">c</span>]</span>.
+
+<div class="paragraph"> </div>
+
+We could write it as follows:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Ltac</span> <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">d</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">lazymatch</span> <span class="id" title="var">d</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| (<span class="id" title="var">_</span> <span class="id" title="notation">=</span> ?<span class="id" title="var">v</span> <span class="id" title="notation">\/</span> ?<span class="id" title="var">rest</span>) =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">s</span> := <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">rest</span> <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">constr</span>:(<span class="id" title="var">v</span> <span class="id" title="notation">::</span> <span class="id" title="var">s</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| (<span class="id" title="var">_</span> <span class="id" title="notation">=</span> ?<span class="id" title="var">v</span>) =&gt; <span class="id" title="keyword">constr</span>:(<span class="id" title="var">v</span> <span class="id" title="notation">::</span> <span class="id" title="constructor">nil</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> =&gt; <span class="id" title="tactic">fail</span> "did not expect" <span class="id" title="var">d</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And if we test it with
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">d</span> := <span class="id" title="keyword">type</span> <span class="id" title="keyword">of</span> (<span class="id" title="var">H</span> <span class="id" title="var">z</span>) <span class="id" title="tactic">in</span> <span class="id" title="keyword">let</span> <span class="id" title="var">r</span> := <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">d</span> <span class="id" title="tactic">in</span> <span class="id" title="tactic">idtac</span> <span class="id" title="var">r</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+we get back <span class="inlinecode">[<span class="id" title="var">a</span>;</span> <span class="inlinecode"><span class="id" title="var">b</span>;</span> <span class="inlinecode"><span class="id" title="var">c</span>]</span>, as expected. On the other hand, if we use it on a
+hypothesis which is not a disjunction,
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">let</span> <span class="id" title="var">d</span> := <span class="id" title="keyword">type</span> <span class="id" title="keyword">of</span> (<span class="id" title="var">H0</span> <span class="id" title="var">z</span>) <span class="id" title="tactic">in</span> <span class="id" title="keyword">let</span> <span class="id" title="var">r</span> := <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">d</span> <span class="id" title="tactic">in</span> <span class="id" title="tactic">idtac</span> <span class="id" title="var">r</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+we get back our custom error message, as expected:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">Error</span>: <span class="id" title="keyword">Ltac</span> <span class="id" title="var">call</span> <span class="id" title="var">to</span> "disjunction_to_list" <span class="id" title="var">failed</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Tactic</span> <span class="id" title="var">failure</span>: <span class="id" title="var">did</span> <span class="id" title="var">not</span> <span class="id" title="var">expect</span> (<span class="id" title="var">P</span> <span class="id" title="var">z</span> -&gt; <span class="id" title="var">Q</span> <span class="id" title="var">z</span>).
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+Now, let's not hard code <span class="inlinecode"><span class="id" title="var">H</span></span>, but find it with a <span class="inlinecode"><span class="id" title="keyword">match</span></span> <span class="inlinecode"><span class="id" title="keyword">goal</span></span>:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+| <span class="id" title="var">H</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">x</span>: <span class="id" title="var">U</span>), ?<span class="id" title="var">d</span> |- <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">r</span> := <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">d</span> <span class="id" title="tactic">in</span> <span class="id" title="tactic">idtac</span> <span class="id" title="var">r</span><br/>
+<span class="id" title="keyword">end</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+But this results in an unhelpful error message:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">Error</span>: <span class="id" title="var">No</span> <span class="id" title="var">matching</span> <span class="id" title="var">clauses</span> <span class="id" title="keyword">for</span> <span class="id" title="keyword">match</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+So let's add some debug output with <span class="inlinecode"><span class="id" title="tactic">idtac</span></span> to check which hypotheses are being tested:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+| <span class="id" title="var">H</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">x</span>: <span class="id" title="var">U</span>), ?<span class="id" title="var">d</span> |- <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">idtac</span> "Trying" <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">r</span> := <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">d</span> <span class="id" title="tactic">in</span> <span class="id" title="tactic">idtac</span> <span class="id" title="var">r</span><br/>
+<span class="id" title="keyword">end</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+But unfortunately, we don't get any debug output, the only thing displayed in
+ProofGeneral's response window is
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">Error</span>: <span class="id" title="var">No</span> <span class="id" title="var">matching</span> <span class="id" title="var">clauses</span> <span class="id" title="keyword">for</span> <span class="id" title="keyword">match</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+Now here's the trick: ProofGeneral also has a buffer named <span class="inlinecode">*<span class="id" title="var">coq</span>*</span>, and if we
+open it, we find the raw output of the coqtop process, which contains all the
+debug output:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode">&lt;<span class="id" title="var">infomsg</span>&gt;<span class="id" title="var">Trying</span> <span class="id" title="var">H0</span>&lt;/<span class="id" title="var">infomsg</span>&gt;<br/>
+&lt;<span class="id" title="var">infomsg</span>&gt;<span class="id" title="var">Trying</span> <span class="id" title="var">H</span>&lt;/<span class="id" title="var">infomsg</span>&gt;<br/>
+&lt;<span class="id" title="var">infomsg</span>&gt;<span class="id" title="var">Trying</span> <span class="id" title="var">R</span>&lt;/<span class="id" title="var">infomsg</span>&gt;<br/>
+&lt;<span class="id" title="var">infomsg</span>&gt;<span class="id" title="var">Trying</span> <span class="id" title="var">Q</span>&lt;/<span class="id" title="var">infomsg</span>&gt;<br/>
+&lt;<span class="id" title="var">infomsg</span>&gt;<span class="id" title="var">Trying</span> <span class="id" title="var">P</span>&lt;/<span class="id" title="var">infomsg</span>&gt;
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+An alternative way to get all output is, surprisingly, to use the <span class="inlinecode"><span class="id" title="var">Fail</span></span> command:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">Fail</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+| <span class="id" title="var">H</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">x</span>: <span class="id" title="var">U</span>), ?<span class="id" title="var">d</span> |- <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">idtac</span> "Trying" <span class="id" title="var">H</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">r</span> := <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">d</span> <span class="id" title="tactic">in</span> <span class="id" title="tactic">idtac</span> <span class="id" title="var">r</span><br/>
+<span class="id" title="keyword">end</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+It prints all we want into the response buffer:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">Trying</span> <span class="id" title="var">H0</span><br/>
+<span class="id" title="var">Trying</span> <span class="id" title="var">H</span><br/>
+<span class="id" title="var">Trying</span> <span class="id" title="var">R</span><br/>
+<span class="id" title="var">Trying</span> <span class="id" title="var">Q</span><br/>
+<span class="id" title="var">Trying</span> <span class="id" title="var">P</span><br/>
+<span class="id" title="var">The</span> <span class="id" title="var">command</span> <span class="id" title="var">has</span> <span class="id" title="var">indeed</span> <span class="id" title="var">failed</span> <span class="id" title="keyword">with</span> <span class="id" title="var">message</span>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">No</span> <span class="id" title="var">matching</span> <span class="id" title="var">clauses</span> <span class="id" title="keyword">for</span> <span class="id" title="keyword">match</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+So we now know how to debug our tactic, but we still need to find why the above failed.
+It turns out that the <span class="inlinecode"><span class="id" title="var">d</span></span> we were passing to <span class="inlinecode"><span class="id" title="var">disjunction_to_list</span></span> contains an
+unbound variable <span class="inlinecode"><span class="id" title="var">x</span></span>, so matching on it is not allowed and fails.
+We can fix it as follows:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+| <span class="id" title="var">A</span>: <span class="id" title="keyword">forall</span> (<span class="id" title="var">x</span>: <span class="id" title="var">U</span>), ?<span class="id" title="var">d</span> |- <span class="id" title="var">_</span> =&gt;<br/>
+&nbsp;&nbsp;<span class="id" title="tactic">idtac</span> "Trying" <span class="id" title="var">d</span>;<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">A'</span> := <span class="id" title="keyword">type</span> <span class="id" title="keyword">of</span> (<span class="id" title="var">A</span> <span class="id" title="var">z</span>) <span class="id" title="tactic">in</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">r</span> := <span class="id" title="var">disjunction_to_list</span> <span class="id" title="var">A'</span> <span class="id" title="tactic">in</span> <span class="id" title="tactic">idtac</span> <span class="id" title="var">r</span><br/>
+<span class="id" title="keyword">end</span>.
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+Whose output is as expected:
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" title="var">Trying</span> (<span class="id" title="var">P</span> <span class="id" title="var">x</span> -&gt; <span class="id" title="var">Q</span> <span class="id" title="var">x</span>)<br/>
+<span class="id" title="var">Trying</span> (<span class="id" title="var">x</span> = <span class="id" title="var">a</span> \/ <span class="id" title="var">x</span> = <span class="id" title="var">b</span> \/ <span class="id" title="var">x</span> = <span class="id" title="var">c</span>)<br/>
+[<span class="id" title="var">a</span>; <span class="id" title="var">b</span>; <span class="id" title="var">c</span>]
+<div class="paragraph"> </div>
+
+</span>
+<div class="paragraph"> </div>
+
+So, long story short:
+In order to find lost debug output, it might help to look at the <span class="inlinecode">*<span class="id" title="var">coq</span>*</span> buffer or to
+precede a failing command with <span class="inlinecode"><span class="id" title="var">Fail</span></span>.
+
+<div class="paragraph"> </div>
+
+You can find the Coq source of this blog post <a href="https://github.com/samuelgruetter/samuelgruetter.github.io/blob/master/_posts/LostIdtacOutput.v">here</a>.
+
+</div>
+<div class="code">
+
+<br/>
+</div>
