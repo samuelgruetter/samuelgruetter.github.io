@@ -55,10 +55,21 @@ Currently, I'm working on a [verified compiler](https://github.com/mit-plv/bedro
 - For my bachelor thesis, I designed, explored and implemented a simple structurally typed language in [PLT redex](https://redex.racket-lang.org/)
 
 
+<style>
+.bibtexnumber a, .bibtexnumber a:hover {
+    color: #000;
+    text-decoration: none;
+}
+</style>
 
-{% comment %}
-TODO Publications
-{% endcomment %}
+## Publications
+
+{% include_relative publications.html %}
+
+
+## Reports
+
+{% include_relative reports.html %}
 
 
 ## Education

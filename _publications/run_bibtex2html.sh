@@ -1,2 +1,6 @@
 #!/bin/sh
-bibtex2html -d -r -revkeys -nobibsource -nodoi -nokeywords -noabstract -nobiblinks -nolinks publications.bib
+
+OPTIONS="-d -r -revkeys -nodoc -nofooter -nokeywords -noabstract -linebreak -nf url pdf"
+
+bibtex2html $OPTIONS -o ../publications publications.bib
+bibtex2html $OPTIONS -o ../reports reports.bib
