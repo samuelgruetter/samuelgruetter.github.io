@@ -25,7 +25,7 @@ title: Samuel Gruetter
 
 <div class="rightbox">
     <b>Office address:</b><br/>
-    <a href="https://www.csail.mit.edu/sites/default/files/resources/maps/8G/G822.gif">32-G822</a><br/>
+    <a href="https://www.csail.mit.edu/sites/default/files/resources/maps/8G/G806.gif">32-G806</a><br/>
     MIT CSAIL, Stata Center<br/>
     32 Vassar Street<br/>
     Cambridge MA 02139<br/>
