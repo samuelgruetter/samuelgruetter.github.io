@@ -1,3 +1,3 @@
 ---
-redirect_to: "/assets/cv-samuel-gruetter-v2018-11-28.pdf"
+redirect_to: "/assets/cv-samuel-gruetter-v2020-02-06.pdf"
 ---
