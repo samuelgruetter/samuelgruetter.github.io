@@ -1,67 +1,77 @@
 
-@article{VSTFloyd2018,
-  title = {{{VST}}-{{Floyd}}: {{A Separation Logic Tool}} to {{Verify Correctness}} of {{C Programs}}},
-  volume = {61},
-  issn = {0168-7433, 1573-0670},
-  shorttitle = {{{VST}}-{{Floyd}}},
-  doi = {10.1007/s10817-018-9457-5},
-  abstract = {The Verified Software Toolchain builds foundational machine-checked proofs of the functional correctness of C programs. Its program logic, Verifiable C, is a shallowly embedded higher-order separation Hoare logic which is proved sound in Coq with respect to the operational semantics of CompCert C light. This paper introduces VST-Floyd, a verification assistant which offers a set of semiautomatic tactics helping users build functional correctness proofs for C programs using Verifiable C.},
-  language = {en},
-  number = {1-4},
-  urldate = {2018-07-12},
-  journal = {Journal of Automated Reasoning},
-  url = {http://www.cs.princeton.edu/~appel/papers/VST-Floyd.pdf},
-  author = {Cao, Qinxiang and Beringer, Lennart and Gruetter, Samuel and Dodds, Josiah and Appel, Andrew W.},
-  month = jun,
-  year = {2018},
-  pages = {367-422}
-}
-
 @article{DOT2016,
   title = {The {{Essence}} of {{Dependent Object Types}}},
-  doi = {10.1007/978-3-319-30936-1_14},
-  abstract = {Focusing on path-dependent types, the paper develops foundations for Scala from first principles. Starting from a simple calculus D-$<$: of dependent functions, it adds records, intersections and recursion to arrive at DOT, a calculus for dependent object types. The paper shows an encoding of System F with subtyping in D-$<$: and demonstrates the expressiveness of DOT by modeling a range of Scala constructs in it. Amin, Nada; Gr\"utter, Karl Samuel; Odersky, Martin; Rompf, Tiark; Stucki, Sandro},
-  language = {en},
-  urldate = {2018-11-28},
-  journal = {A List of Successes That Can Change the World: Essays Dedicated to Philip Wadler on the Occasion of His 60th Birthday},
-  url = {https://infoscience.epfl.ch/record/215280/files/paper_1.pdf},
   author = {Amin, Nada and Gruetter, Samuel and Odersky, Martin and Rompf, Tiark and Stucki, Sandro},
   year = {2016},
-  pages = {249-272}
+  pages = {249--272},
+  doi = {10.1007/978-3-319-30936-1_14},
+  url = {https://infoscience.epfl.ch/record/215280/files/paper_1.pdf},
+  urldate = {2018-11-28},
+  abstract = {Focusing on path-dependent types, the paper develops foundations for Scala from first principles. Starting from a simple calculus D-{$<$}: of dependent functions, it adds records, intersections and recursion to arrive at DOT, a calculus for dependent object types. The paper shows an encoding of System F with subtyping in D-{$<$}: and demonstrates the expressiveness of DOT by modeling a range of Scala constructs in it. Amin, Nada; Gr\"utter, Karl Samuel; Odersky, Martin; Rompf, Tiark; Stucki, Sandro},
+  journal = {A List of Successes That Can Change the World: Essays Dedicated to Philip Wadler on the Occasion of His 60th Birthday},
+  language = {en}
 }
 
 @article{IOICreativity2016,
   title = {Watch Them {{Fight}}! {{Creativity Task Tournaments}} of the {{Swiss Olympiad}} in {{Informatics}}},
+  author = {Gruetter, Samuel and Graf, Daniel and Schmid, Benjamin},
+  year = {2016},
+  month = jul,
   volume = {10},
+  pages = {73--85},
   issn = {18227732, 23358955},
   doi = {10.15388/ioi.2016.05},
-  abstract = {As part of the qualification process for the Swiss Olympiad in Informatics, the contestants are each year confronted with one ``Creativity Task''. Unlike typical problems in programming competitions, creativity tasks usually do not have an optimal solution, and are often adaptations of popular board or computer games. After receiving all submissions, a tournament is organized, where the students can watch how their programs play interactively against each other, and points are awarded to the authors according to the tournament ranking.},
-  language = {en},
-  number = {1},
-  urldate = {2018-11-28},
-  journal = {Olympiads in Informatics},
   url = {http://www.ioinformatics.org/oi/pdf/v10_2016_73_85.pdf},
-  author = {Gruetter, Samuel and Graf, Daniel and Schmid, Benjamin},
-  month = jul,
-  year = {2016},
-  pages = {73-85}
+  urldate = {2018-11-28},
+  abstract = {As part of the qualification process for the Swiss Olympiad in Informatics, the contestants are each year confronted with one ``Creativity Task''. Unlike typical problems in programming competitions, creativity tasks usually do not have an optimal solution, and are often adaptations of popular board or computer games. After receiving all submissions, a tournament is organized, where the students can watch how their programs play interactively against each other, and points are awarded to the authors according to the tournament ranking.},
+  journal = {Olympiads in Informatics},
+  language = {en},
+  number = {1}
+}
+
+@article{Lightbulb2021,
+  title = {Integration {{Verification Across Software}} and {{Hardware}} for a {{Simple Embedded System}}},
+  author = {Erbsen, Andres and Gruetter, Samuel and Choi, Joonwon and Wood, Clark and Chlipala, Adam},
+  year = {2021},
+  doi = {10.1145/3453483.3454065},
+  url = {https://samuelgruetter.net/assets/lightbulb_pldi21.pdf},
+  abstract = {The interfaces between layers of a system are susceptible to bugs if developers of adjacent layers proceed under subtly different assumptions. Formal verification of two layers against the same formal model of the interface between them can be used to shake out these bugs. Doing so for every interface in the system can, in principle, yield unparalleled assurance of the correctness and security of the system as a whole. However, there have been remarkably few efforts that carry out this exercise, and all of them have simplified the task by restricting interactivity of the application, inventing new simplified instruction sets, and using unrealistic input and output mechanisms. We report on the first verification of a realistic embedded system, with its application software, device drivers, compiler, and RISC-V processor represented inside the Coq proof assistant as one mathematical object, with a machine-checked proof of functional correctness. A key challenge is structuring the proof modularly, so that further refinement of the components or expansion of the system can proceed without revisiting the rest of the system.},
+  journal = {PLDI'21}
 }
 
 @inproceedings{VSTFlow2017,
-  address = {Dallas, Texas, USA},
   title = {Short {{Paper}}: {{Towards Information Flow Reasoning}} about {{Real}}-{{World C Code}}},
-  isbn = {978-1-4503-5099-0},
   shorttitle = {Short {{Paper}}},
-  doi = {10.1145/3139337.3139345},
-  abstract = {Strangely, despite much recent success proving information flow control (IFC) security for C programs, little work has investigated how to prove IFC security directly against C code, as opposed to over an abstract specification. We consider what a suitable IFC logic for C might look like, and propose a suitable continuation-passing style IFC security definition for C code. We discuss our ongoing work implementing these ideas in the context of an existing full-featured, sound program verification framework for C, the Verified Software Toolchain, supported by the verified C complier CompCert.},
-  language = {en},
-  urldate = {2018-11-28},
   booktitle = {Proceedings of the 2017 {{Workshop}} on {{Programming Languages}} and {{Analysis}} for {{Security}}  - {{PLAS}} '17},
-  publisher = {{ACM Press}},
-  url = {https://people.eng.unimelb.edu.au/tobym/papers/plas2017.pdf},
   author = {Gruetter, Samuel and Murray, Toby},
   year = {2017},
-  pages = {43-48}
+  pages = {43--48},
+  publisher = {{ACM Press}},
+  address = {{Dallas, Texas, USA}},
+  doi = {10.1145/3139337.3139345},
+  url = {https://people.eng.unimelb.edu.au/tobym/papers/plas2017.pdf},
+  urldate = {2018-11-28},
+  abstract = {Strangely, despite much recent success proving information flow control (IFC) security for C programs, little work has investigated how to prove IFC security directly against C code, as opposed to over an abstract specification. We consider what a suitable IFC logic for C might look like, and propose a suitable continuation-passing style IFC security definition for C code. We discuss our ongoing work implementing these ideas in the context of an existing full-featured, sound program verification framework for C, the Verified Software Toolchain, supported by the verified C complier CompCert.},
+  isbn = {978-1-4503-5099-0},
+  language = {en}
+}
+
+@article{VSTFloyd2018,
+  title = {{{VST}}-{{Floyd}}: {{A Separation Logic Tool}} to {{Verify Correctness}} of {{C Programs}}},
+  shorttitle = {{{VST}}-{{Floyd}}},
+  author = {Cao, Qinxiang and Beringer, Lennart and Gruetter, Samuel and Dodds, Josiah and Appel, Andrew W.},
+  year = {2018},
+  month = jun,
+  volume = {61},
+  pages = {367--422},
+  issn = {0168-7433, 1573-0670},
+  doi = {10.1007/s10817-018-9457-5},
+  url = {http://www.cs.princeton.edu/~appel/papers/VST-Floyd.pdf},
+  urldate = {2018-07-12},
+  abstract = {The Verified Software Toolchain builds foundational machine-checked proofs of the functional correctness of C programs. Its program logic, Verifiable C, is a shallowly embedded higher-order separation Hoare logic which is proved sound in Coq with respect to the operational semantics of CompCert C light. This paper introduces VST-Floyd, a verification assistant which offers a set of semiautomatic tactics helping users build functional correctness proofs for C programs using Verifiable C.},
+  journal = {Journal of Automated Reasoning},
+  language = {en},
+  number = {1-4}
 }
 
 
