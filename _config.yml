@@ -16,7 +16,7 @@
 title: Samuel Gruetter
 description: Personal website and blog of Samuel Gruetter
 baseurl: "" # the subpath of your site, e.g. /blog
-twitter_username: samuelgruetter
+twitter_username: "@samuelgruetter"
 github_username:  samuelgruetter
 
 # Build settings
