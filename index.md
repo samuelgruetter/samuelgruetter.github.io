@@ -42,10 +42,16 @@ title: Samuel Gruetter
 
 I'm interested in Programming Languages and Verification, Interactive Theorem Proving, Language Design, Compilers, Specifications, and Software Engineering.
 
-Currently, I'm working on a [verified compiler](https://github.com/mit-plv/bedrock2/) from a very simple C-like language to [RISC-V](https://riscv.org/) machine code.
-This compiler connects to a program logic framework developed by my colleague [Andres Erbsen](https://andres.systems/), and to a [verified RISC-V processor](http://plv.csail.mit.edu/kami/) developed by my colleague [Joonwon Choi](http://joonwon.net/c/). Together, we're working on an end-to-end theorem which states that if we use the program logic to prove that a program satisfies an IO specification, and use the compiler to compile it and then run it on the processor, the processor satisfies the same IO specification.
-The source code of this project is [on GitHub](https://github.com/mit-plv/bedrock2).
-We don't have a paper about it yet, but I gave a presentation focusing on the RISC-V part of the project at the [RISC-V Summit 2019](https://riscv.org/2019/12/risc-v-summit-2019-proceedings/), and you can find the video recording [here](https://www.youtube.com/watch?v=FmWZKRScs-o).
+Currently, I'm working on the [Bedrock2](https://github.com/mit-plv/bedrock2/) project.
+It includes a very simple C-like source language, a program logic for it, and a compiler to [RISC-V](https://riscv.org/) machine code, as specified by [riscv-coq](https://github.com/mit-plv/riscv-coq). Another project of our group, [Kami](http://plv.csail.mit.edu/kami/), developed a RISC-V processor and proved it correct against the same [riscv-coq](https://github.com/mit-plv/riscv-coq) spec, which enabled us to prove an end-to-end theorem about the behavior of a whole software-hardware stack.
+The first milestone of this project is the IoT lightbulb, which we presented at PLDI'21 (see [paper](https://dl.acm.org/doi/10.1145/3453483.3454065) and [video](https://www.pldi21.org/poster_pldi.244.html#tab-extended)). Earlier, I also gave a talk about it at the [RISC-V Summit 2019](https://riscv.org/2019/12/risc-v-summit-2019-proceedings/), and you can find the video recording [here](https://www.youtube.com/watch?v=FmWZKRScs-o).
+
+
+## Trouble combining undefined behavior and nondeterminism? 🡲&nbsp;Try [omnisemantics](/blog/2022/09/30/omnisemantics/)!
+
+While working on Bedrock2, my colleague [Andres Erbsen](https://andres.systems/) and me came up with a style of programming language semantics that we think works much better in the presence of **undefined&nbsp;behavior** and **nondeterminism** than using traditional smallstep or bigstep operational semantics would.
+A little later, our advisor [Adam Chlipala](http://adam.chlipala.net/) chatted with [Arthur Charguéraud](https://www.chargueraud.org/) and they found out that he had discovered the same style of semantics as well, but was using it for functional languages, while we were using it for imperative languages.
+Together, we wrote a paper about it, and you can find a preprint [here](https://hal.archives-ouvertes.fr/hal-03255472), or if you prefer just a short introduction, you can also check out this [blog post](/blog/2022/09/30/omnisemantics/).
 
 
 ## Past Projects
@@ -70,7 +76,7 @@ We don't have a paper about it yet, but I gave a presentation focusing on the RI
 {% include_relative publications.html %}
 
 
-## Reports
+## Preprints and Reports
 
 {% include_relative reports.html %}
 
@@ -84,6 +90,7 @@ We don't have a paper about it yet, but I gave a presentation focusing on the RI
 
 ## Industry Experience
 
-- Summer 2019: Worked with [Rustan Leino](http://leino.science/) at Amazon's Automated Reasoning Group on a prototype rewrite of [Amazon's S3 Encryption Client](https://aws.amazon.com/articles/client-side-data-encryption-with-the-aws-sdk-for-java-and-amazon-s3/) in Dafny, a verification-aware programming language. Wrote and proved specifications for software interacting with real-world systems such as Amazon's S3 storage service.
+- Summer 2021: At Google Research, worked on the [Silver Oak Project](https://github.com/project-oak/silveroak), using [Bedrock2](https://github.com/mit-plv/bedrock2) to formally verify drivers for peripherals used in the [OpenTitan](https://opentitan.org/) root of trust, and connected software correctness proofs to hardware correctness proofs
+- Summer 2019: Worked with [Rustan Leino](http://leino.science/) at Amazon's Automated Reasoning Group on a prototype rewrite of [Amazon's S3 Encryption Client](https://aws.amazon.com/articles/client-side-data-encryption-with-the-aws-sdk-for-java-and-amazon-s3/) in Dafny, a verification-aware programming language. Wrote and proved specifications for software interacting with real-world systems such as Amazon's S3 storage service
 - Fall 2015: 6 months Software Engineering Internship at Netcetera AG, Berne, working in a scrum team, developing a Web Application with a Java/Oracle DB/Spring backend and an AngularJS/TypeScript frontend
 - Summer 2012: Java Internship at Accenture in Bangalore (India), developed a web interface with JSF/Enterprise JavaBeans monitoring hundreds of servers and databases
