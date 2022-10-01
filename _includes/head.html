@@ -54,14 +54,14 @@
       <meta name="twitter:image2" content="{{ page.twitter_card.image2 }}">
       <meta name="twitter:image3" content="{{ page.twitter_card.image3 }}">
     {% else %}
-      <meta name="twitter:image" content="{{ page.twitter_card.image }}">
+      <meta name="twitter:image" content="{{ page.twitter_card.image | absolute_url }}">
       {% if page.twitter_card.type == 'photo' %}
         {% if page.twitter_card.width %}<meta name="twitter:image:width" content="{{ page.twitter_card.width }}">{% endif %}
         {% if page.twitter_card.height %}<meta name="twitter:image:height" content="{{ page.twitter_card.height }}">{% endif %}
       {% endif %}
     {% endif %}
   {% elsif site.twitter_image %}
-    <meta name="twitter:image" content="{{ site.twitter_image }}">
+    <meta name="twitter:image" content="{{ site.twitter_image | absolute_url }}">
   {% endif %}
 
   {% include fonts.html %}
