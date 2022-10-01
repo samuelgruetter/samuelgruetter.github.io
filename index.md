@@ -47,7 +47,7 @@ It includes a very simple C-like source language, a program logic for it, and a 
 The first milestone of this project is the IoT lightbulb, which we presented at PLDI'21 (see [paper](https://dl.acm.org/doi/10.1145/3453483.3454065) and [video](https://www.pldi21.org/poster_pldi.244.html#tab-extended)). Earlier, I also gave a talk about it at the [RISC-V Summit 2019](https://riscv.org/2019/12/risc-v-summit-2019-proceedings/), and you can find the video recording [here](https://www.youtube.com/watch?v=FmWZKRScs-o).
 
 
-## Trouble combining undefined behavior and nondeterminism? 🡲&nbsp;Try [omnisemantics](/blog/2022/09/30/omnisemantics/)!
+## Trouble combining undefined behavior and nondeterminism? ➔&nbsp;Try [omnisemantics](/blog/2022/09/30/omnisemantics/)!
 
 While working on Bedrock2, my colleague [Andres Erbsen](https://andres.systems/) and me came up with a style of programming language semantics that we think works much better in the presence of **undefined&nbsp;behavior** and **nondeterminism** than using traditional smallstep or bigstep operational semantics would.
 A little later, our advisor [Adam Chlipala](http://adam.chlipala.net/) chatted with [Arthur Charguéraud](https://www.chargueraud.org/) and they found out that he had discovered the same style of semantics as well, but was using it for functional languages, while we were using it for imperative languages.
