@@ -4,7 +4,7 @@ title:         Omnisemantics in a nutshell
 description:   "An alternative style of programming language semantics that works much better in the presence of undefined behavior and nondeterminism than using traditional smallstep or bigstep operational semantics"
 twitter_card:
    type:       summary_large_image
-   image:      /assets/omnisemantics/omnisemantics_fwd_sim.png
+   image:      /assets/omnisemantics/omnisemantics_sim.png
 ---
 
 With my collaborators [Arthur Charguéraud](https://www.chargueraud.org/), [Adam Chlipala](http://adam.chlipala.net/) and [Andres Erbsen](https://andres.systems/), we came up with a new style of programming language semantics that we find works much better in the presence of undefined behavior and nondeterminism than traditional bigstep and smallstep operational semantics do.
