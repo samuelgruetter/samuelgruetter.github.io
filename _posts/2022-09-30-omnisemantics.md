@@ -1,7 +1,7 @@
 ---
 layout:        post
 title:         Omnisemantics in a nutshell
-description:   "An alternative style of programming language semantics that works much better in the presence of undefined behavior and nondeterminism than using traditional smallstep or bigstep operational semantics"
+description:   "Semantics that work much better in the presence of undefined behavior and nondeterminism than traditional smallstep or bigstep operational semantics"
 twitter_card:
    type:       summary_large_image
    image:      /assets/omnisemantics/omnisemantics_sim.png
