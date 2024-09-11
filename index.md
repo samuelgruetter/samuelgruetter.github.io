@@ -12,7 +12,7 @@ title: Samuel Gruetter
 </style>
 
 <div style="width: 40%">
-  <img style="float: left; padding-right: 10px; padding-bottom: 10px" src="{{ "/assets/gruetter_samuel_2.jpg" | absolute_url }}">
+  <img style="float: left; padding-right: 10px; padding-bottom: 10px" src="{{ "/assets/2024_samuel_gruetter.jpg" | absolute_url }}">
 </div>
 
 <div class="rightbox">
@@ -23,6 +23,7 @@ title: Samuel Gruetter
   <b>Email:</b> My last name at mit dot edu <br/>
 </div>
 
+<!-- commented out because not physically there any more
 <div class="rightbox">
     <b>Office address:</b><br/>
     <a href="https://www.csail.mit.edu/sites/default/files/resources/maps/8G/G886.gif">32-G886</a><br/>
@@ -31,6 +32,7 @@ title: Samuel Gruetter
     Cambridge MA 02139<br/>
     USA<br/>
 </div>
+-->
 
 <div class="rightbox">
   <b>Full CV:</b> <a href="{{ "/cv/" | absolute_url }}">here</a><br/>
