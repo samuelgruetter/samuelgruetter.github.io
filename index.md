@@ -16,7 +16,7 @@ title: Samuel Gruetter
 </div>
 
 <div class="rightbox">
-  I'm a PhD student at <a href="https://www.csail.mit.edu/">MIT CSAIL</a>, advised by <a href="http://adam.chlipala.net/">Prof. Adam Chlipala</a>.
+  I recently completed my PhD at <a href="https://www.csail.mit.edu/">MIT CSAIL</a>, advised by <a href="http://adam.chlipala.net/">Prof. Adam Chlipala</a>. More website updates following soon!
 </div>
 
 <div class="rightbox">
@@ -85,7 +85,7 @@ Together, we wrote a paper about it, and you can find a preprint [here](https://
 
 ## Education
 
-- Since September 2017: Pursuing a PhD in Computer Science at MIT with [Prof. Adam Chlipala](http://adam.chlipala.net/)'s Programming Languages and Verification Group
+- September 2024: PhD in Computer Science at MIT with [Prof. Adam Chlipala](http://adam.chlipala.net/)'s Programming Languages and Verification Group
 - April 2017: MSc in Computer Science from [EPFL](www.epfl.ch) in Lausanne, Switzerland
 - July 2013: BSc in Computer Science from EPFL
 
