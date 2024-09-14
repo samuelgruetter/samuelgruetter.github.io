@@ -78,7 +78,7 @@ Together, we wrote a paper about it, and you can find a preprint [here](https://
 {% include_relative publications.html %}
 
 
-## Preprints and Reports
+## Preprints, Theses, Reports
 
 {% include_relative reports.html %}
 
