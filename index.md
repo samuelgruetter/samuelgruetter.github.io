@@ -86,7 +86,7 @@ Together, we wrote a paper about it, and you can find a preprint [here](https://
 ## Education
 
 - September 2024: PhD in Computer Science at MIT with [Prof. Adam Chlipala](http://adam.chlipala.net/)'s Programming Languages and Verification Group
-- April 2017: MSc in Computer Science from [EPFL](www.epfl.ch) in Lausanne, Switzerland
+- April 2017: MSc in Computer Science from [EPFL](https://www.epfl.ch/) in Lausanne, Switzerland
 - July 2013: BSc in Computer Science from EPFL
 
 
