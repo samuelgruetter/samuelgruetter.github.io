@@ -7,7 +7,11 @@
 #
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-
+#
+# If you need help with YAML syntax, here are some quick references for you:
+# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
+# https://learnxinyminutes.com/docs/yaml/
+#
 # Site settings
 # These are used to personalize your new site. If you look in the HTML files,
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
@@ -20,20 +24,31 @@ twitter_username: "@samuelgruetter"
 github_username:  samuelgruetter
 
 # Build settings
-markdown: kramdown
-remote_theme: yous/whiteglass
+theme: jekyll-whiteglass
 plugins:
   - jekyll-archives
   - jekyll-paginate
   - jekyll-sitemap
   - jekyll-redirect-from
 
-permalink: /blog/:year/:month/:day/:title/
+# Markdown settings
+markdown: kramdown
+excerpt_separator: <!--more-->
+kramdown:
+  auto_ids: false
+  enable_coderay: false
+  entity_output: as_char
+  footnote_nr: 1
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  toc_levels: 1..6
+
 paginate_path: /blog/posts/:num/
 paginate: 5
 
-excerpt_separator: <!--more-->
+# Outputting
+permalink: /blog/:year/:month/:day/:title/
 
+# jekyll-archives
 jekyll-archives:
   enabled:
     - categories
@@ -47,6 +62,9 @@ jekyll-archives:
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
 exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
   - Gemfile
   - Gemfile.lock
   - node_modules
@@ -54,6 +72,7 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
+  - README.md
   - "*~"
   - "*.aux"
   - "*.glob"
