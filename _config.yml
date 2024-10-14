@@ -24,7 +24,7 @@ twitter_username: "@samuelgruetter"
 github_username:  samuelgruetter
 
 # Build settings
-remote_theme: yous/whiteglass
+remote_theme: yous/whiteglass@v1.11.5
 plugins:
   - jekyll-archives
   - jekyll-paginate
