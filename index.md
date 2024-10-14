@@ -16,23 +16,25 @@ title: Samuel Gruetter
 </div>
 
 <div class="rightbox">
-  I recently completed my PhD at <a href="https://www.csail.mit.edu/">MIT CSAIL</a>, advised by <a href="http://adam.chlipala.net/">Prof. Adam Chlipala</a>. More website updates following soon!
+I am a postdoc working with
+<a href="https://people.inf.ethz.ch/troscoe/">Prof. Timothy (Mothy) Roscoe's</a> group,
+in the <a href="http://www.systems.ethz.ch/">Systems Group</a>
+of the <a href="http://www.inf.ethz.ch">Department of Computer Science</a>
+at <a href="http://www.ethz.ch">ETH Zürich</a>.
 </div>
 
 <div class="rightbox">
-  <b>Email:</b> My last name at mit dot edu <br/>
+  <b>Email:</b> My first name dot my last name at inf dot ethz dot ch <br/>
 </div>
 
-<!-- commented out because not physically there any more
 <div class="rightbox">
     <b>Office address:</b><br/>
-    <a href="https://www.csail.mit.edu/sites/default/files/resources/maps/8G/G886.gif">32-G886</a><br/>
-    MIT CSAIL, Stata Center<br/>
-    32 Vassar Street<br/>
-    Cambridge MA 02139<br/>
-    USA<br/>
+    ETH Zurich Systems Group<br/>
+    STF H 313<br/>
+    Stampfenbachstrasse 114<br/>
+    8092 Zürich<br/>
+    Switzerland<br/>
 </div>
--->
 
 <div class="rightbox">
   <b>Full CV:</b> <a href="{{ "/cv/" | absolute_url }}">here</a><br/>
@@ -40,13 +42,9 @@ title: Samuel Gruetter
 
 <div style="clear: both; display: table;"></div>
 
-## Research Interests
+I did my PhD at [MIT CSAIL](https://www.csail.mit.edu/) with [Prof. Adam Chlipala's](http://adam.chlipala.net) group, working on machine-checked end-to-end proofs about software-hardware stacks for simple bare-metal embedded systems.
 
-I'm interested in Programming Languages and Verification, Interactive Theorem Proving, Language Design, Compilers, Specifications, and Software Engineering.
-
-Currently, I'm working on the [Bedrock2](https://github.com/mit-plv/bedrock2/) project.
-It includes a very simple C-like source language, a program logic for it, and a compiler to [RISC-V](https://riscv.org/) machine code, as specified by [riscv-coq](https://github.com/mit-plv/riscv-coq). Another project of our group, [Kami](http://plv.csail.mit.edu/kami/), developed a RISC-V processor and proved it correct against the same [riscv-coq](https://github.com/mit-plv/riscv-coq) spec, which enabled us to prove an end-to-end theorem about the behavior of a whole software-hardware stack.
-The first milestone of this project is the IoT lightbulb, which we presented at PLDI'21 (see [paper](https://dl.acm.org/doi/10.1145/3453483.3454065) and [video](https://www.pldi21.org/poster_pldi.244.html#tab-extended)). Earlier, I also gave a talk about it at the [RISC-V Summit 2019](https://riscv.org/2019/12/risc-v-summit-2019-proceedings/), and you can find the video recording [here](https://www.youtube.com/watch?v=FmWZKRScs-o).
+Now, as a postdoc in [Prof. Timothy (Mothy) Roscoe's](https://people.inf.ethz.ch/troscoe/) group, I am excited to learn more about [real operating systems](https://dl.acm.org/doi/10.1145/3593856.3595903) and to apply formal methods to systems research.
 
 
 ## Trouble combining undefined behavior and nondeterminism? ➔&nbsp;Try [omnisemantics](/blog/2022/09/30/omnisemantics/)!
