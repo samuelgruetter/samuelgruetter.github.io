@@ -16,15 +16,7 @@ title: Samuel Gruetter
 </div>
 
 <div class="rightbox">
-I am a postdoc working with
-<a href="https://people.inf.ethz.ch/troscoe/">Prof. Timothy (Mothy) Roscoe's</a> group,
-in the <a href="http://www.systems.ethz.ch/">Systems Group</a>
-of the <a href="http://www.inf.ethz.ch">Department of Computer Science</a>
-at <a href="http://www.ethz.ch">ETH Zürich</a>.
-</div>
-
-<div class="rightbox">
-  <b>Email:</b> My first name dot my last name at inf dot ethz dot ch <br/>
+  <b>Email:</b> firstname dot lastname at inf dot ethz dot ch<br/>
 </div>
 
 <div class="rightbox">
@@ -42,16 +34,18 @@ at <a href="http://www.ethz.ch">ETH Zürich</a>.
 
 <div style="clear: both; display: table;"></div>
 
-I did my PhD at [MIT CSAIL](https://www.csail.mit.edu/) with [Prof. Adam Chlipala's](http://adam.chlipala.net) group, working on machine-checked end-to-end proofs about software-hardware stacks for simple bare-metal embedded systems.
+I am a postdoc working with [Prof. Timothy (Mothy) Roscoe](https://people.inf.ethz.ch/troscoe/)'s group, in the [Systems Group](http://www.systems.ethz.ch/) of the [Department of Computer Science](http://www.inf.ethz.ch) at [ETH Zürich](http://www.ethz.ch).
 
-Now, as a postdoc in [Prof. Timothy (Mothy) Roscoe's](https://people.inf.ethz.ch/troscoe/) group, I am excited to learn more about [real operating systems](https://dl.acm.org/doi/10.1145/3593856.3595903) and to apply formal methods to systems research.
+I did my PhD at [MIT CSAIL](https://www.csail.mit.edu/) with [Prof. Adam Chlipala](http://adam.chlipala.net)'s group, working on machine-checked end&#8209;to&#8209;end proofs about software-hardware stacks for simple bare-metal embedded systems.
+
+Now, as a postdoc in Mothy's group, I am excited to learn about [real operating systems](https://dl.acm.org/doi/10.1145/3593856.3595903) and to apply formal methods to systems research.
 
 
 ## Trouble combining undefined behavior and nondeterminism? ➔&nbsp;Try [omnisemantics](/blog/2022/09/30/omnisemantics/)!
 
-While working on Bedrock2, my colleague [Andres Erbsen](https://andres.systems/) and me came up with a style of programming language semantics that we think works much better in the presence of **undefined&nbsp;behavior** and **nondeterminism** than using traditional smallstep or bigstep operational semantics would.
+While working on [Bedrock2](https://github.com/mit-plv/bedrock2), my colleague [Andres Erbsen](https://andres.systems/) and me came up with a style of programming language semantics that we think works much better in the presence of **undefined&nbsp;behavior** and **nondeterminism** than using traditional smallstep or bigstep operational semantics would.
 A little later, our advisor [Adam Chlipala](http://adam.chlipala.net/) chatted with [Arthur Charguéraud](https://www.chargueraud.org/) and they found out that he had discovered the same style of semantics as well, but was using it for functional languages, while we were using it for imperative languages.
-Together, we wrote a paper about it, and you can find a preprint [here](https://hal.archives-ouvertes.fr/hal-03255472), or if you prefer just a short introduction, you can also check out this [blog post](/blog/2022/09/30/omnisemantics/).
+Together, we wrote a [paper](https://dl.acm.org/doi/10.1145/3579834) about it, or if you prefer just a short introduction, you can also check out this [blog post](/blog/2022/09/30/omnisemantics/).
 
 
 ## Past Projects
