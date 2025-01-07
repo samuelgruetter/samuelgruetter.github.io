@@ -29,7 +29,7 @@ title: Samuel Gruetter
 </div>
 
 <div class="rightbox">
-  <b>Full CV:</b> <a href="{{ "/cv/" | absolute_url }}">here</a><br/>
+  <b>CV:</b> <a href="{{ "/cv/" | absolute_url }}">HTML</a> | <a href="{{ "/assets/cv-samuel-gruetter-v2024-10-14.pdf" | absolute_url }}">PDF</a> <br/>
 </div>
 
 <div style="clear: both; display: table;"></div>

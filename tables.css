@@ -1,0 +1,14 @@
+/** key-value table: first column no-break (short "key"), second column takes all the remaining space */
+table.kv td:first-child {
+    white-space: nowrap;
+}
+table.kv td:last-child {
+    width: 100%;
+}
+table.kv td:not(:last-child) {
+    padding-right: 1em;
+}
+table.kv td {
+    vertical-align: top;
+    padding: 0;
+}
