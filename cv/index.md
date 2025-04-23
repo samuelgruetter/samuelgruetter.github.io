@@ -25,7 +25,7 @@ title: "Samuel Gruetter: Curriculum Vitae"
 
 ## Industry Internships
 
-| Google, 2021 | In the Silver Oak Project, used Bedrock2 to formally verify drivers for peripherals used in the OpenTitan root of trust, and connected software correctness proofs to hardware correctness proofs |
+| Google, 2021 | In the Silver Oak Project, supervised by Satnam Singh, used Bedrock2 to formally verify drivers for peripherals used in the OpenTitan root of trust, and connected software correctness proofs to hardware correctness proofs |
 | Amazon ARG, 2019 | Worked with Rustan Leino at Amazon's Automated Reasoning Group on a prototype rewrite of Amazon's S3 Encryption Client in Dafny, a verification-aware programming language. Wrote and proved specifications for software interacting with real-world systems such as Amazon's S3 storage service |
 | Netcetera, 2015 | 6 months Software Engineering Internship at Netcetera AG, Berne, working in a scrum team, developing an expert tool for defining and maintaining the fare zones and ticket pricing for all Swiss public transport associations, with a Java/​Oracle DB/Spring backend and an AngularJS frontend in JavaScript/TypeScript |
 | Accenture, 2012  | Java Summer Internship at Accenture in Bangalore (India), developed a web interface with JSF/Enterprise JavaBeans monitoring servers and databases |
@@ -69,7 +69,7 @@ Ranked 2nd at the PLDI'24 Student Research Competition
 
 ## Service
 
-| PLDI'25 | Program committee member |
+| PLDI'25 | Program Committee |
 | &lt;Programming&gt; '22 | External reviewer, [outstanding reviewer awardee](https://programming-journal.org/awards/) |
 | Scala Symposium '22 | Program Committee |
 | OOPSLA'22 | Extended Review and Artifact Evaluation Committee |
