@@ -12,7 +12,7 @@ title: Samuel Gruetter
 </style>
 
 <div style="width: 40%">
-  <img style="float: left; padding-right: 10px; padding-bottom: 10px" src="{{ "/assets/2024_samuel_gruetter.jpg" | absolute_url }}">
+  <img style="float: left; padding-right: 10px; padding-bottom: 10px" src="{{ "/assets/2026_samuel_gruetter.jpg" | absolute_url }}">
 </div>
 
 <div class="rightbox">

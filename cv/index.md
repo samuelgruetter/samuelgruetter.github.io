@@ -69,7 +69,10 @@ Ranked 2nd at the PLDI'24 Student Research Competition
 
 ## Service
 
+| RocqPL'26 | Program Committee |
+| CPP'26 | Program Committee |
 | PLDI'25 | Program Committee |
+| LATTE'25 | Program Committee |
 | &lt;Programming&gt; '22 | External reviewer, [outstanding reviewer awardee](https://programming-journal.org/awards/) |
 | Scala Symposium '22 | Program Committee |
 | OOPSLA'22 | Extended Review and Artifact Evaluation Committee |
@@ -127,6 +130,7 @@ Ranked 2nd at the PLDI'24 Student Research Competition
 
 ## Teaching Experience
 
+| ETHZ Seminar | Designed and taught a BSc seminar on [Machine-Checked Correctness Proofs for Systems](https://systems.ethz.ch/education/courses/2025-spring/proofs-for-systems-seminar.html) |
 | MIT FRAP TA | Teaching assistant for the “Formal Reasoning about Programs” course at MIT. Designed and graded problem sets, held office hours and recitations |
 | SOI lecturer | Gave lectures at workshops of the Swiss Olympiad in Informatics, teaching basic algorithms (such as graphs, scanline, dynamic programming) to high schoolers |
 | MOOC TA | Teaching assistant for the “Principles of Reactive Programming” course on Coursera, a massive open online course with more than 40'000 students. Developed RxScala, the library on which the programming assignments were based, helped develop and test the assignments, and answered forum questions |
