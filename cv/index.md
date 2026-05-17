@@ -51,6 +51,22 @@ Automated reasoning about memory accesses on a modern system-on-chip
 * Pengcheng Xu:<br>
 Specifying and proving hardware functionality via bus traces
 
+Together with Ben Fiedler, I am/was mentoring 14 BSc and MSc students on developing formal models of Systems-on-Chips in the Sockeye language:
+* Adam Berglund
+* Anna Szymkowiak
+* Basil Fischer
+* Gamal Hassan
+* Jan Häussermann
+* Joshua Stalder
+* Konstantin Lucny
+* Lars Leuthold
+* Max Wierse
+* Nina Richter
+* Rubén Aciego
+* Sedan Abdelgawad
+* Teymour Aldridge
+* Viktor Fukala
+
 At MIT, I mentored 12 undergraduate and MEng students on projects related to our group’s research:
 * Thomas Carotti, Pratap Singh (now PhD student at CMU):<br>
 Runtime metrics bounds for the Bedrock2 compiler
