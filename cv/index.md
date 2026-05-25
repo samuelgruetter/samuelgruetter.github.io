@@ -15,11 +15,11 @@ title: "Samuel Gruetter: Curriculum Vitae"
 
 ## Academic Positions
 
-| 10/2024 – present | Postdoctoral researcher with [Prof. Timothy (Mothy) Roscoe](https://people.inf.ethz.ch/troscoe/)'s group, in the [Systems Group](http://www.systems.ethz.ch/) at ETHZ |
-| 09/2017 – 09/2024 | Research assistant at MIT in [Prof. Adam Chlipala](http://adam.chlipala.net/)'s Programming Languages and Verification group |
+| 10/2024 – present | Postdoctoral researcher with [Prof. Timothy (Mothy) Roscoe](https://people.inf.ethz.ch/troscoe/)'s group, in the [Systems Group](http://www.systems.ethz.ch/) at ETHZ, developing [Sockeye](https://arxiv.org/abs/2510.27485), a [tool](https://gitlab.inf.ethz.ch/project-opensockeye/sockeye) implemented in Rust for proving security properties about Systems-on-Chips |
+| 09/2017 – 09/2024 | Research assistant at MIT in [Prof. Adam Chlipala](http://adam.chlipala.net/)'s Programming Languages and Verification group, developing [Bedrock2](https://github.com/mit-plv/bedrock2), a framework in Rocq (formerly Coq) to formally verify systems code, formal RISC-V ISA semantics, a formally verified compiler from a subset of C to RISC-V machine code, end-to-end systems proofs that [cross the software-hardware boundary](https://doi.org/10.1145/3453483.3454065), a formally verified [cryptographic server](https://doi.org/10.1145/3656446), and proofs about a [trap handler](https://doi.org/10.4230/LIPIcs.ITP.2024.17) combining C and assembly |
 | 05/2017 – 07/2017 | Visitor at University of Melbourne, working with [Prof. Toby Murray](https://people.eng.unimelb.edu.au/tobym/) on information flow control proofs for C |
-| 10/2016 – 03/2017 | Visiting student research collaborator in [Prof. Andrew Appel](https://www.cs.princeton.edu/~appel/)'s lab at Princeton University, working on my MSc thesis |
-| 12/2013 – 07/2015 | [MSc Research Scholar](https://www.epfl.ch/schools/ic/education/master/research-scholars/) at EPFL: In parallel to the Master's program in Computer Science, worked part-time as a research assistant at Prof. Martin Odersky's Programming Methods Lab (the "Scala Lab") |
+| 10/2016 – 03/2017 | Visiting student research collaborator in [Prof. Andrew Appel](https://www.cs.princeton.edu/~appel/)'s lab at Princeton University, working on my MSc thesis on improving their [Verified Software Toolchain](https://github.com/PrincetonUniversity/VST), a proof toolchain for C programs, and using it to verify the AES implementation of Mbed TLS |
+| 12/2013 – 07/2015 | [MSc Research Scholar](https://www.epfl.ch/schools/ic/education/master/research-scholars/) at EPFL, working part-time as a research assistant at Prof. Martin Odersky's Programming Methods Lab, writing proofs about Dependent Object Types, the formal model behind Scala |
 {: .kv }
 
 
@@ -32,12 +32,22 @@ title: "Samuel Gruetter: Curriculum Vitae"
 {: .kv }
 
 
+## Key Publications
+
+| PLDI'24 | Samuel Gruetter, Viktor Fukala, and Adam Chlipala. Live Verification in an Interactive Proof Assistant. Proceedings of the ACM on Programming Languages, 8 (PLDI), June 2024. <br> [&nbsp;<a href="https://doi.org/10.1145/3656439">DOI</a>&nbsp;\| <a href="https://dl.acm.org/doi/pdf/10.1145/3656439">PDF</a>&nbsp;\| <a href="https://github.com/mit-plv/bedrock2/tree/LiveVerifArtifact">code</a>&nbsp;] |
+| TOPLAS'23 | Arthur Charguéraud, Adam Chlipala, Andres Erbsen, and Samuel Gruetter\*. Omnisemantics: Smooth Handling of Nondeterminism. ACM Transactions on Programming Languages and Systems, 45(1), March 2023. <br> [&nbsp;<a href="https://doi.org/10.1145/3579834">DOI</a>&nbsp;\| <a href="https://dl.acm.org/doi/10.1145/3579834">PDF</a>&nbsp;\| <a href="https://samuelgruetter.net/assets/omnisemantics-artifact.zip">code</a>&nbsp;]|
+| PLDI'21 | Andres Erbsen<sup>=</sup>, Samuel Gruetter<sup>=</sup>, Joonwon Choi, Clark Wood, and Adam Chlipala. Integration Verification Across Software and Hardware for a Simple Embedded System. PLDI 2021: Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation, June 2021. <br> [&nbsp;<a href="https://doi.org/10.1145/3453483.3454065">DOI</a>&nbsp;\| <a href="https://dl.acm.org/doi/pdf/10.1145/3453483.3454065">PDF</a>&nbsp;\| <a href="https://github.com/mit-plv/bedrock2/blob/lightbulb_artifact/ArtifactEvaluation.md">code</a>&nbsp;]|
+{: .kv }
+
+\* alphabetical order &emsp; &emsp; <sup>=</sup> equal contribution
+
+Full list of publications: <a href="{{ "/publications.html" | absolute_url }}">{{ "/publications.html" | absolute_url }}</a>
+
+
 ## Fellowships and Awards
 
 | ETH Fellowship 2024 | [ETH Postdoctoral Fellowship](https://grantsoffice.ethz.ch/funding-opportunities/internal/eth-fellowships/list-of-fellows.html) ([18% success rate](https://news.ethz.ch/html_mail.jsp?params=zMuT2reNE66HuFySIftKsYwyR9tTLmlDIlJRboaaq9ATKF4y0%2FVmEa6fHWex0lJQ%2BBF1FY47S4AC12WoSVQrHG4UYbFvatxcYd8ZRkP1ViuUjO%2Fdy4jD8ruugeLemNAI#N10128)) |
 | MIT Fellowship 2017 | [MIT Presidential Graduate Fellowship](https://oge.mit.edu/fellowships/presidential-graduate-fellowship-program/) |
-| hc2 2013 | Ranked 3rd at Helvetic Coding Contest |
-| SWERC 2012 | Ranked 7th at Southwestern Europe Regional Contest of ACM International Collegiate Programming Contest |
 | SOI 2010 | Ranked 1st at Swiss Olympiad in Informatics |
 | SPO 2010 | Ranked 1st at Swiss Olympiad in Philosophy |
 {: .kv }

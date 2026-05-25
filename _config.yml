@@ -74,6 +74,8 @@ exclude:
   - vendor/ruby/
   - README.md
   - "*~"
+  - "#*#"
+  - ".#*"
   - "*.aux"
   - "*.glob"
   - "*.v.html"
