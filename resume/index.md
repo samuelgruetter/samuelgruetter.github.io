@@ -9,6 +9,10 @@ title: "Samuel Gruetter: Résumé"
     padding-left: 10px !important;
     padding-right: 10px !important;
   }
+
+  table.kv td:first-child {
+    min-width: 10em;
+  }
 </style>
 
 # Samuel Gruetter: Résumé
@@ -23,19 +27,19 @@ title: "Samuel Gruetter: Résumé"
 
 ## Academic Positions
 
-| 10/2024 – present | Postdoctoral researcher with [Prof. Timothy (Mothy) Roscoe](https://people.inf.ethz.ch/troscoe/)'s group, in the [Systems Group](http://www.systems.ethz.ch/) at ETHZ, developing [Sockeye](https://arxiv.org/abs/2510.27485), a [tool](https://gitlab.inf.ethz.ch/project-opensockeye/sockeye) implemented in Rust for proving security properties about Systems-on-Chips |
-| 09/2017 – 09/2024 | Research assistant at MIT in [Prof. Adam Chlipala](http://adam.chlipala.net/)'s Programming Languages and Verification group, developing [Bedrock2](https://github.com/mit-plv/bedrock2), a framework in Rocq (formerly Coq) based on separation logic to formally verify systems code, formal RISC-V ISA semantics, a formally verified compiler from a subset of C to RISC-V machine code, end-to-end systems proofs that [cross the software-hardware boundary](https://doi.org/10.1145/3453483.3454065), a formally verified [cryptographic server](https://doi.org/10.1145/3656446), and proofs about a [trap handler](https://doi.org/10.4230/LIPIcs.ITP.2024.17) combining C and assembly |
-| 05/2017 – 07/2017 | Visitor at University of Melbourne, working with [Prof. Toby Murray](https://people.eng.unimelb.edu.au/tobym/) on separation-logic extensions for information flow control proofs for C |
-| 10/2016 – 03/2017 | Visiting student research collaborator in [Prof. Andrew Appel](https://www.cs.princeton.edu/~appel/)'s lab at Princeton University, working on my MSc thesis on improving their [Verified Software Toolchain](https://github.com/PrincetonUniversity/VST), a separation logic for C programs, and using it to verify symmetric cryptography, the AES implementation of Mbed TLS |
-| 12/2013 – 07/2015 | [MSc Research Scholar](https://www.epfl.ch/schools/ic/education/master/research-scholars/) at EPFL, working part-time as a research assistant at Prof. Martin Odersky's Programming Methods Lab, writing proofs about Dependent Object Types, the formal model behind Scala |
+| 10/2024 – present | Postdoctoral researcher at **ETHZ** with [Prof. Timothy (Mothy) Roscoe](https://people.inf.ethz.ch/troscoe/) in the [Systems Group](http://www.systems.ethz.ch/), leading the development of [Sockeye](https://gitlab.inf.ethz.ch/project-opensockeye/sockeye), a domain-specific language and tool to prove security properties and find vulnerabilities in Systems-on-Chips [[paper](https://doi.org/10.48550/arXiv.2510.27485) to appear at SOSP'26] |
+| 09/2017 – 09/2024 | Research assistant at **MIT** in [Prof. Adam Chlipala](http://adam.chlipala.net/)'s Programming Languages and Verification group, developing [Bedrock2](https://github.com/mit-plv/bedrock2), a framework in Rocq (formerly Coq) based on separation logic to formally verify systems code. Research highlights include end-to-end systems proofs that cross the software-hardware boundary [[PLDI'21](https://doi.org/10.1145/3453483.3454065)] and Live Verification, a program verification framework that displays tweakable symbolic state to the programmers as they write their code [[PLDI'24](https://doi.org/10.1145/3656439)] |
+| 05/2017 – 07/2017 | Visitor at **University of Melbourne**, working with [Prof. Toby Murray](https://people.eng.unimelb.edu.au/tobym/) on separation-logic extensions for information flow control proofs for C [[PLAS'17](https://doi.org/10.1145/3139337.3139345)] |
+| 10/2016 – 03/2017 | Visiting student research collaborator at **Princeton University** in [Prof. Andrew Appel](https://www.cs.princeton.edu/~appel/)'s lab, writing MSc thesis on improving their [Verified Software Toolchain](https://github.com/PrincetonUniversity/VST), a separation logic for C programs, and using it to verify symmetric cryptography, the AES implementation of Mbed TLS [[JAR'18](https://doi.org/10.1007/s10817-018-9457-5)] |
+| 12/2013 – 07/2015 | [MSc Research Scholar](https://www.epfl.ch/schools/ic/education/master/research-scholars/) at **EPFL**, working part-time as a research assistant in Prof. Martin Odersky's Scala Lab, writing proofs about Dependent Object Types, the formal model behind Scala [[WF'16](https://doi.org/10.1007/978-3-319-30936-1_14)] |
 {: .kv }
 
 
 ## Industry Internships
 
-| Google, 2021 | In the Silver Oak Project, supervised by Satnam Singh, used Bedrock2 to formally verify drivers for peripherals used in the OpenTitan root of trust, and connected software correctness proofs to hardware correctness proofs |
-| Amazon ARG, 2019 | Worked with Rustan Leino at Amazon's Automated Reasoning Group on a prototype rewrite of Amazon's S3 Encryption Client in Dafny, a verification-aware programming language. Wrote and proved specifications for software interacting with real-world systems such as Amazon's S3 storage service |
-| Netcetera, 2015 | 6 months Software Engineering Internship at Netcetera AG, Berne, working in a scrum team, developing an expert tool for defining and maintaining the fare zones and ticket pricing for all Swiss public transport associations, with a Java/​Oracle DB/Spring backend and an AngularJS frontend in JavaScript/TypeScript |
+| Google, 2021 | In the Silver Oak Project, supervised by Satnam Singh, used Rocq and Bedrock2 to formally verify drivers for peripherals used in the OpenTitan root of trust, and connected software correctness proofs to hardware correctness proofs |
+| Amazon ARG, 2019 | Supervised by Rustan Leino at Amazon's Automated Reasoning Group, rewrote Amazon's S3 Encryption Client in Dafny, a verification-aware programming language. Wrote and proved specifications for software interacting with real-world systems such as Amazon's S3 storage service |
+| Netcetera, 2015 | Worked in a Scrum team during a 6-month Software Engineering internship at Netcetera AG, Bern, developing an expert tool for maintaining the fare zones for Swiss public transport using Java, ​Oracle DB, Spring, AngularJS and TypeScript |
 | Accenture, 2012  | Java Summer Internship at Accenture in Bangalore (India), developed a web interface with JSF/Enterprise JavaBeans monitoring servers and databases |
 {: .kv }
 
