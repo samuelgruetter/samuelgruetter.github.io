@@ -41,7 +41,7 @@ I did my PhD at [MIT](https://web.mit.edu/) in [Prof. Adam Chlipala](http://adam
 
 Now, as a postdoc in Mothy's group, I am excited to learn about [real operating systems](https://dl.acm.org/doi/10.1145/3593856.3595903) and to apply formal methods to systems research.
 
-Currently, I am leading the development of **Sockeye**, a domain-specific [language](https://arxiv.org/abs/2510.27485) and [analysis tool](https://gitlab.inf.ethz.ch/project-opensockeye/sockeye) to formalize and analyze hardware reference manuals of Systems-on-a-Chip (SoCs).
+Currently, I am leading the development of **Sockeye**, a domain-specific [language](https://dl.acm.org/doi/10.1145/3830418.3843883) and [analysis tool](https://gitlab.inf.ethz.ch/project-opensockeye/sockeye) to formalize and analyze hardware reference manuals of Systems-on-a-Chip (SoCs).
 It supports both automated bug finding as well as proving security properties about hardware platforms and their configurations,
 and comes with a growing [library](https://gitlab.inf.ethz.ch/project-opensockeye/sockeye/-/tree/main/specs?ref_type=heads) of specifications of a diverse range of hardware platforms, unifying code by more than a dozen contributors.
 
